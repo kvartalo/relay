@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/kvartalo/relay/commands"
@@ -9,7 +10,7 @@ import (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "krelay"
+	app.Name = "relay"
 	app.Version = "0.0.1-alpha"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{Name: "config"},
@@ -18,7 +19,8 @@ func main() {
 	app.Commands = []cli.Command{}
 	app.Commands = append(app.Commands, commands.WalletCommands...)
 	app.Commands = append(app.Commands, commands.ServerCommands...)
-	app.Run(os.Args)
-	// apiService := endpoint.NewApiService()
-	// apiService.Run(":3000")
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

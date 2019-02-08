@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/fatih/color"
 	"github.com/urfave/cli"
 )
 
@@ -29,29 +30,24 @@ var WalletCommands = []cli.Command{
 	},
 }
 
-func cmdWalletNew(c *cli.Context) {
-	keystoreId := c.Args().Get(0)
-	if keystoreId == "" {
-		fmt.Println("usage: wallet new [keystoreId] [password]")
-		os.Exit(0)
-	}
-	password := c.Args().Get(1)
+func cmdWalletNew(c *cli.Context) error {
+	password := c.Args().Get(0)
 	if password == "" {
-		fmt.Println("usage: wallet new [keystoreId] [password]")
+		color.Red("No password specified. Usage: wallet new [password]")
 		os.Exit(0)
 	}
 
-	ks := keystore.NewKeyStore(KEYSPATH+keystoreId, keystore.StandardScryptN, keystore.StandardScryptP)
+	ks := keystore.NewKeyStore(KEYSPATH, keystore.StandardScryptN, keystore.StandardScryptP)
 	account, err := ks.NewAccount(password)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("New Keystore created in '" + KEYSPATH + keystoreId + "'")
-	fmt.Println("addr: ", account.Address.Hex())
+	color.Green("New Keystore with address '" + account.Address.Hex() + "' created in '" + KEYSPATH + "'")
+	return nil
 }
 
-func cmdWalletInfo(c *cli.Context) {
+func cmdWalletInfo(c *cli.Context) error {
 	files, err := ioutil.ReadDir(KEYSPATH)
 	if err != nil {
 		log.Fatal(err)
@@ -61,4 +57,5 @@ func cmdWalletInfo(c *cli.Context) {
 	for _, f := range files {
 		fmt.Println("	", f.Name())
 	}
+	return nil
 }

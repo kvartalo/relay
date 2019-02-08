@@ -1,3 +1,5 @@
 tmp
 keystorage
 keystorages
+*.yaml
+relay
