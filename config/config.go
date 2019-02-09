@@ -16,6 +16,9 @@ type Config struct {
 	Web3 struct {
 		Url string
 	}
+	Contracts struct {
+		Token string
+	}
 }
 
 var C Config

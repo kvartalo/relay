@@ -35,10 +35,10 @@ func cmdStart(c *cli.Context) error {
 	}
 	color.Cyan("Keystore with addr " + account.Address.Hex() + " opened")
 
-	web3client := eth.ConnectWeb3(ks, account)
+	ethSrv := eth.NewEthService(ks, account)
 
 	// get relay balance
-	balance, err := eth.GetBalance(web3client, account.Address)
+	balance, err := ethSrv.GetBalance(account.Address)
 	if err != nil {
 		color.Red(err.Error())
 	}
