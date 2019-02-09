@@ -7,8 +7,9 @@ import (
 
 type Config struct {
 	Keystorage struct {
-		Address  string
-		Password string
+		Address     string
+		Password    string
+		KeyJsonPath string
 	}
 	Server struct {
 		Port string

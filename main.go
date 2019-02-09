@@ -1,9 +1,9 @@
 package main
 
 import (
-	"log"
 	"os"
 
+	"github.com/fatih/color"
 	"github.com/kvartalo/relay/commands"
 	"github.com/urfave/cli"
 )
@@ -18,9 +18,10 @@ func main() {
 
 	app.Commands = []cli.Command{}
 	app.Commands = append(app.Commands, commands.WalletCommands...)
+	app.Commands = append(app.Commands, commands.ContractsCommands...)
 	app.Commands = append(app.Commands, commands.ServerCommands...)
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Fatal(err)
+		color.Red(err.Error())
 	}
 }

@@ -2,11 +2,12 @@ package eth
 
 import (
 	"context"
-	"crypto/ecdsa"
 	"fmt"
+	"io/ioutil"
 	"math"
 	"math/big"
 	"os"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/accounts"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -60,22 +61,42 @@ func (ethSrv *EthService) GetBalance(address common.Address) (*big.Float, error)
 }
 
 // DeployTokenContract deploys the Token contract to eth network
-func (ethSrv *EthService) DeployTokenContract(privateKey *ecdsa.PrivateKey, nonce int, gasPrice *big.Int) {
-	auth := bind.NewKeyedTransactor(privateKey)
-	auth.Nonce = big.NewInt(int64(nonce))
-	auth.Value = big.NewInt(0)     // wei
-	auth.GasLimit = uint64(300000) // units
-	auth.GasPrice = gasPrice
+func (ethSrv *EthService) DeployTokenContract() error {
+	// fromAddress := ethSrv.acc.Address
+	// nonce, err := ethSrv.client.PendingNonceAt(context.Background(), fromAddress)
+	// if err != nil {
+	//         return err
+	// }
+	//
+	// gasPrice, err := ethSrv.client.SuggestGasPrice(context.Background())
+	// if err != nil {
+	//         return err
+	// }
+
+	file, err := os.Open(config.C.Keystorage.KeyJsonPath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	b, err := ioutil.ReadAll(file)
+	if err != nil {
+		return err
+	}
+	auth, err := bind.NewTransactor(strings.NewReader(string(b)), config.C.Keystorage.Password)
+	if err != nil {
+		return err
+	}
 
 	taxDestination := ethSrv.acc.Address
 	address, tx, instance, err := token.DeployToken(auth, ethSrv.client, taxDestination)
 	if err != nil {
-		color.Red(err.Error())
+		return err
 	}
 	_ = instance
 
-	fmt.Println(address.Hex())
-	fmt.Println(tx.Hash().Hex())
+	color.Green("token contract deployed at address: " + address.Hex())
+	fmt.Println("deployment transaction: " + tx.Hash().Hex())
+	return nil
 }
 
 // LoadTokenContract loads already deployed Token contract

@@ -23,9 +23,15 @@ var ServerCommands = []cli.Command{
 	},
 }
 
-func cmdStart(c *cli.Context) error {
+// startRelay does:
+// - reads the configuration from config.yaml
+// - opens the KeyStorage specified in the configuration, creating a new keystorage and account
+// - creates a new EthService
+// - prints the balance of the Relay wallet
+func startRelay(c *cli.Context) *eth.EthService {
 	if err := config.MustRead(c); err != nil {
-		return err
+		color.Red(err.Error())
+		os.Exit(0)
 	}
 
 	ks, account, err := importKeystorage(config.C.Keystorage.Address, config.C.Keystorage.Password)
@@ -41,8 +47,15 @@ func cmdStart(c *cli.Context) error {
 	balance, err := ethSrv.GetBalance(account.Address)
 	if err != nil {
 		color.Red(err.Error())
+		os.Exit(0)
 	}
 	color.Cyan("current balance: " + balance.String() + " ETH\n")
+
+	return ethSrv
+}
+
+func cmdStart(c *cli.Context) error {
+	_ = startRelay(c)
 
 	// run the service
 	apiService := endpoint.NewApiService()
