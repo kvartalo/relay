@@ -55,10 +55,12 @@ func startRelay(c *cli.Context) *eth.EthService {
 }
 
 func cmdStart(c *cli.Context) error {
-	_ = startRelay(c)
+	ethSrv := startRelay(c)
+	tokenContractAddr := common.HexToAddress(config.C.Contracts.Token)
+	ethSrv.LoadTokenContract(tokenContractAddr)
 
 	// run the service
-	apiService := endpoint.NewApiService()
+	apiService := endpoint.Serve(ethSrv)
 	apiService.Run(":" + config.C.Server.Port)
 
 	return nil

@@ -23,6 +23,7 @@ type EthService struct {
 	ks     *keystore.KeyStore
 	acc    *accounts.Account
 	client *ethclient.Client
+	Token  *token.Token
 }
 
 func NewEthService(ks *keystore.KeyStore, acc *accounts.Account) *EthService {
@@ -105,5 +106,5 @@ func (ethSrv *EthService) LoadTokenContract(contractAddr common.Address) {
 	if err != nil {
 		color.Red(err.Error())
 	}
-	_ = instance
+	ethSrv.Token = instance
 }

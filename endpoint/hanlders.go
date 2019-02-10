@@ -14,11 +14,19 @@ func handleInfo(c *gin.Context) {
 func handleGetBalance(c *gin.Context) {
 	addrHex := c.Param("addr")
 	addr := common.HexToAddress(addrHex)
+	balance, err := ethSrv.Token.BalanceOf(nil, addr)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+	}
 	c.JSON(200, gin.H{
-		"addr": addr,
+		"addr":    addr,
+		"balance": balance.String(),
 	})
 }
 
+// no history for the moment
 func handleGetHistory(c *gin.Context) {
 	addrHex := c.Param("addr")
 	addr := common.HexToAddress(addrHex)
@@ -30,9 +38,15 @@ func handleGetHistory(c *gin.Context) {
 func handleGetTxNonce(c *gin.Context) {
 	addrHex := c.Param("addr")
 	addr := common.HexToAddress(addrHex)
+	nonce, err := ethSrv.Token.NonceOf(nil, addr)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+	}
 	c.JSON(200, gin.H{
 		"addr":  addr,
-		"nonce": "nonce",
+		"nonce": nonce,
 	})
 }
 
