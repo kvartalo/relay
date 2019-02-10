@@ -17,6 +17,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/kvartalo/relay/config"
 	"github.com/kvartalo/relay/eth/token"
+	"github.com/kvartalo/relay/utils"
 )
 
 type EthService struct {
@@ -61,21 +62,6 @@ func (ethSrv *EthService) GetBalance(address common.Address) (*big.Float, error)
 	return ethBalance, nil
 }
 
-func GetAuth() (*bind.TransactOpts, error) {
-	file, err := os.Open(config.C.Keystorage.KeyJsonPath)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-	b, err := ioutil.ReadAll(file)
-	if err != nil {
-		return nil, err
-	}
-	auth, err := bind.NewTransactor(strings.NewReader(string(b)), config.C.Keystorage.Password)
-	return auth, err
-
-}
-
 // DeployTokenContract deploys the Token contract to eth network
 func (ethSrv *EthService) DeployTokenContract() error {
 	// fromAddress := ethSrv.acc.Address
@@ -112,4 +98,32 @@ func (ethSrv *EthService) LoadTokenContract(contractAddr common.Address) {
 		color.Red(err.Error())
 	}
 	ethSrv.Token = instance
+}
+
+type SignatureEthMsg [65]byte
+
+func (ethSrv *EthService) SignBytes(b []byte) (*SignatureEthMsg, error) {
+	h := utils.EthHash(b)
+	sigBytes, err := ethSrv.ks.SignHash(*ethSrv.acc, h[:])
+	if err != nil {
+		return nil, err
+	}
+	sig := &SignatureEthMsg{}
+	copy(sig[:], sigBytes)
+
+	return sig, nil
+}
+
+func GetAuth() (*bind.TransactOpts, error) {
+	file, err := os.Open(config.C.Keystorage.KeyJsonPath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+	b, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+	auth, err := bind.NewTransactor(strings.NewReader(string(b)), config.C.Keystorage.Password)
+	return auth, err
 }
