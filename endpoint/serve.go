@@ -15,7 +15,7 @@ func newApiService() *gin.Engine {
 	api.GET("/balance/:addr", handleGetBalance)
 	api.GET("/history/:addr", handleGetHistory)
 	api.GET("/tx/nonce/:addr", handleGetTxNonce)
-	api.POST("/tx/:addr", handlePostTx)
+	api.POST("/tx", handlePostTx)
 	api.GET("/polls", handleGetPolls)
 	api.GET("/polls/:id", handleGetPoll)
 	return api

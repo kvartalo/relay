@@ -1,8 +1,11 @@
 package endpoint
 
 import (
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
+	"github.com/kvartalo/relay/eth"
 )
 
 func handleInfo(c *gin.Context) {
@@ -15,11 +18,7 @@ func handleGetBalance(c *gin.Context) {
 	addrHex := c.Param("addr")
 	addr := common.HexToAddress(addrHex)
 	balance, err := ethSrv.Token.BalanceOf(nil, addr)
-	if err != nil {
-		c.JSON(400, gin.H{
-			"error": err.Error(),
-		})
-	}
+	check(c, err)
 	c.JSON(200, gin.H{
 		"addr":    addr,
 		"balance": balance.String(),
@@ -39,22 +38,32 @@ func handleGetTxNonce(c *gin.Context) {
 	addrHex := c.Param("addr")
 	addr := common.HexToAddress(addrHex)
 	nonce, err := ethSrv.Token.NonceOf(nil, addr)
-	if err != nil {
-		c.JSON(400, gin.H{
-			"error": err.Error(),
-		})
-	}
+	check(c, err)
 	c.JSON(200, gin.H{
 		"addr":  addr,
 		"nonce": nonce,
 	})
 }
 
+type TxMsg struct {
+	From  common.Address
+	To    common.Address
+	Value *big.Int
+	R     [32]byte
+	S     [32]byte
+	V     byte
+}
+
 func handlePostTx(c *gin.Context) {
-	addrHex := c.Param("addr")
-	addr := common.HexToAddress(addrHex)
+	var tx TxMsg
+	c.BindJSON(&tx)
+
+	auth, err := eth.GetAuth()
+	check(c, err)
+	ethTx, err := ethSrv.Token.Transfer(auth, tx.From, tx.To, tx.Value, tx.R, tx.S, tx.V)
+	check(c, err)
 	c.JSON(200, gin.H{
-		"addr": addr,
+		"ethTx": ethTx.Hash().Hex(),
 	})
 }
 
