@@ -41,6 +41,13 @@ func NewEthService(ks *keystore.KeyStore, acc *accounts.Account) *EthService {
 	}
 }
 
+func (ethSrv *EthService) Account() *accounts.Account {
+	return ethSrv.acc
+}
+func (ethSrv *EthService) Client() *ethclient.Client {
+	return ethSrv.client
+}
+
 func (ethSrv *EthService) ConnectWeb3() *ethclient.Client {
 	client, err := ethclient.Dial(config.C.Web3.Url)
 	if err != nil {
@@ -102,8 +109,10 @@ func (ethSrv *EthService) LoadTokenContract(contractAddr common.Address) {
 
 type SignatureEthMsg [65]byte
 
+// SignBytes performs a keccak256 hash over the bytes and signs it
 func (ethSrv *EthService) SignBytes(b []byte) (*SignatureEthMsg, error) {
-	h := utils.EthHash(b)
+	// h := utils.EthHash(b)
+	h := utils.HashBytes(b)
 	sigBytes, err := ethSrv.ks.SignHash(*ethSrv.acc, h[:])
 	if err != nil {
 		return nil, err

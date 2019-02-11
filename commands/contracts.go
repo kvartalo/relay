@@ -1,6 +1,8 @@
 package commands
 
 import (
+	"context"
+	"fmt"
 	"math/big"
 	"os"
 	"strconv"
@@ -9,6 +11,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/kvartalo/relay/config"
 	"github.com/kvartalo/relay/eth"
+	"github.com/kvartalo/relay/utils"
 	"github.com/urfave/cli"
 )
 
@@ -69,8 +72,6 @@ func cmdTokenMint(c *cli.Context) error {
 	}
 
 	ethSrv := startRelay(c)
-	tokenContractAddr := common.HexToAddress(config.C.Contracts.Token)
-	ethSrv.LoadTokenContract(tokenContractAddr)
 
 	addr := common.HexToAddress(config.C.Keystorage.Address)
 
@@ -84,6 +85,13 @@ func cmdTokenMint(c *cli.Context) error {
 	}
 
 	color.Green("mint success, tx: " + tx.Hash().Hex())
+
+	tokenBalance, err := ethSrv.Token.BalanceOf(nil, addr)
+	if err != nil {
+		return err
+	}
+	color.Magenta("current token balance: " + tokenBalance.String() + " Tokens\n")
+
 	return nil
 }
 
@@ -113,31 +121,51 @@ func cmdTokenTransfer(c *cli.Context) error {
 	fromAddr := common.HexToAddress(config.C.Keystorage.Address)
 	tokenAddr := common.HexToAddress(config.C.Contracts.Token)
 
+	nonce, err := ethSrv.Client().PendingNonceAt(context.Background(), fromAddr)
+	if err != nil {
+		return err
+	}
+
+	gasPrice, err := ethSrv.Client().SuggestGasPrice(context.Background())
+	if err != nil {
+		return err
+	}
+
 	auth, err := eth.GetAuth()
 	if err != nil {
 		return err
 	}
+	auth.Nonce = big.NewInt(int64(nonce))
+	auth.Value = big.NewInt(0)     // in wei
+	auth.GasLimit = uint64(300000) // in units
+	auth.GasPrice = gasPrice
 
-	nonce, err := ethSrv.Token.NonceOf(nil, fromAddr)
+	tokenNonce, err := ethSrv.Token.NonceOf(nil, fromAddr)
 	if err != nil {
 		return err
 	}
 
+	tokenNonceBytes := utils.Uint64ToEthBytes(tokenNonce.Uint64())
+	amountBytes := utils.Uint64ToEthBytes(amount.Uint64())
+
 	// build tx msg
 	var msgBytes []byte
-	msgBytes = append(msgBytes, []byte{0x19}...)
-	msgBytes = append(msgBytes, []byte{0}...)
+	msgBytes = append(msgBytes, byte(0x19))
+	msgBytes = append(msgBytes, byte(0))
 	msgBytes = append(msgBytes, tokenAddr.Bytes()...)
-	msgBytes = append(msgBytes, nonce.Bytes()...)
+	msgBytes = append(msgBytes, tokenNonceBytes...)
 	msgBytes = append(msgBytes, fromAddr.Bytes()...)
 	msgBytes = append(msgBytes, toAddr.Bytes()...)
-	msgBytes = append(msgBytes, amount.Bytes()...)
+	msgBytes = append(msgBytes, amountBytes...)
+	fmt.Println(common.ToHex(msgBytes))
 
 	// sign msg
 	sig, err := ethSrv.SignBytes(msgBytes)
 	if err != nil {
 		return err
 	}
+	sig[64] += 27
+
 	// get r, s, v from sig
 	var r, s [32]byte
 	copy(r[:], sig[:32])

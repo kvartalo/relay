@@ -21,15 +21,41 @@ Set the config file `./config.yaml`
 keystorage:
         address: "0xaddress"
         password: "secretpassword"
+        keyjsonpath: "./keystorage/keystoragepath"
 server:
         Port: "portnumber"
 web3:
-        url: "web3gatewayurl"
+        url: "web3gateway-url"
 contracts:
-	token: "deployedAddr"
+        token: "0xdeployedAddr"
 ```
 
 Run Relay
 ```
 ./relay start
 ```
+
+### Commands
+```sh
+# info about the relay address, eth and tokens
+./relay info
+
+# create new keystore
+./relay wallet new
+
+# info of the current keystores
+./relay wallet info
+
+# deploy the token smart contract
+./relay contracts token deploy
+
+# mint tokens that will go to the relay address
+./relay contracts token mint [amount]
+
+# transfer tokens to a specified address
+./relay contracts token transfer [address] [amount]
+
+# start the relay server
+./relay start
+```
+

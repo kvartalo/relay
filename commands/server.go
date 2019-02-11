@@ -21,6 +21,12 @@ var ServerCommands = []cli.Command{
 		Usage:   "start the server",
 		Action:  cmdStart,
 	},
+	{
+		Name:    "info",
+		Aliases: []string{},
+		Usage:   "get info about the server",
+		Action:  cmdInfo,
+	},
 }
 
 // startRelay does:
@@ -39,7 +45,7 @@ func startRelay(c *cli.Context) *eth.EthService {
 		fmt.Println(err.Error())
 		os.Exit(0)
 	}
-	color.Cyan("Keystore with addr " + account.Address.Hex() + " opened")
+	fmt.Println("Keystore with addr " + account.Address.Hex() + " opened")
 
 	ethSrv := eth.NewEthService(ks, account)
 
@@ -49,15 +55,23 @@ func startRelay(c *cli.Context) *eth.EthService {
 		color.Red(err.Error())
 		os.Exit(0)
 	}
-	color.Cyan("current balance: " + balance.String() + " ETH\n")
+	color.Cyan("current ether balance: " + balance.String() + " ETH\n")
+
+	addr := common.HexToAddress(config.C.Keystorage.Address)
+	tokenContractAddr := common.HexToAddress(config.C.Contracts.Token)
+	ethSrv.LoadTokenContract(tokenContractAddr)
+	tokenBalance, err := ethSrv.Token.BalanceOf(nil, addr)
+	if err != nil {
+		color.Red(err.Error())
+		os.Exit(0)
+	}
+	color.Magenta("current token balance: " + tokenBalance.String() + " Tokens\n")
 
 	return ethSrv
 }
 
 func cmdStart(c *cli.Context) error {
 	ethSrv := startRelay(c)
-	tokenContractAddr := common.HexToAddress(config.C.Contracts.Token)
-	ethSrv.LoadTokenContract(tokenContractAddr)
 
 	// run the service
 	apiService := endpoint.Serve(ethSrv)
@@ -72,6 +86,20 @@ func importKeystorage(addr string, password string) (*keystore.KeyStore, *accoun
 	account, err := ks.Find(accounts.Account{
 		Address: common.HexToAddress(addr),
 	})
+	if err != nil {
+		return nil, nil, err
+	}
 
-	return ks, &account, err
+	err = ks.Unlock(account, config.C.Keystorage.Password)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return ks, &account, nil
+}
+
+func cmdInfo(c *cli.Context) error {
+	_ = startRelay(c)
+
+	return nil
 }
