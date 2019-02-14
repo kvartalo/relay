@@ -5,11 +5,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func check(c *gin.Context, err error) {
-	if err != nil {
-		color.Red("error: " + err.Error())
-		c.JSON(400, gin.H{
-			"error": err.Error(),
-		})
-	}
+func fail(c *gin.Context, err error) {
+	color.Red("error: " + err.Error())
+	c.JSON(400, gin.H{
+		"error": err.Error(),
+	})
 }

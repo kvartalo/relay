@@ -74,7 +74,7 @@ func cmdStart(c *cli.Context) error {
 	ethSrv := startRelay(c)
 
 	// run the service
-	apiService := endpoint.Serve(ethSrv)
+	apiService := endpoint.Serve(config.C, ethSrv)
 	apiService.Run(":" + config.C.Server.Port)
 
 	return nil

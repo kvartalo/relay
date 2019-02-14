@@ -3,10 +3,12 @@ package endpoint
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/kvartalo/relay/config"
 	"github.com/kvartalo/relay/eth"
 )
 
 var ethSrv *eth.EthService
+var serverConfig config.Config
 
 func newApiService() *gin.Engine {
 	api := gin.Default()
@@ -21,7 +23,8 @@ func newApiService() *gin.Engine {
 	return api
 }
 
-func Serve(ethService *eth.EthService) *gin.Engine {
+func Serve(cnfg config.Config, ethService *eth.EthService) *gin.Engine {
 	ethSrv = ethService
+	serverConfig = cnfg
 	return newApiService()
 }
