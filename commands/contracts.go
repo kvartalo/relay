@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/big"
 	"os"
-	"strconv"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/fatih/color"
@@ -45,18 +44,9 @@ var ContractsCommands = []cli.Command{
 }
 
 func cmdTokenDeploy(c *cli.Context) error {
-	ethSrv := startRelay(c)
+	ethSrv := loadRelay(c)
 	err := ethSrv.DeployTokenContract()
 	return err
-}
-
-func stringToBigInt(s string) (*big.Int, error) {
-	i, err := strconv.Atoi(s)
-	if err != nil {
-		return nil, err
-	}
-	bigi := big.NewInt(int64(i))
-	return bigi, nil
 }
 
 func cmdTokenMint(c *cli.Context) error {
@@ -65,13 +55,13 @@ func cmdTokenMint(c *cli.Context) error {
 		color.Red("No amount specified. Usage: contracts token mint [amount]")
 		os.Exit(0)
 	}
-	amount, err := stringToBigInt(amountStr)
+	amount, err := utils.StringToBigInt(amountStr)
 	if err != nil {
 		color.Red("Amount parsing error. Usage: contracts token mint [amount]")
 		os.Exit(0)
 	}
 
-	ethSrv := startRelay(c)
+	ethSrv := loadRelay(c)
 
 	addr := common.HexToAddress(config.C.Keystorage.Address)
 
@@ -100,7 +90,7 @@ func cmdTokenTransfer(c *cli.Context) error {
 	if amountStr == "" {
 		os.Exit(0)
 	}
-	amount, err := stringToBigInt(amountStr)
+	amount, err := utils.StringToBigInt(amountStr)
 	if err != nil {
 		color.Red("No amount specified. Usage: contracts token transfer [addr] [amount]")
 		os.Exit(0)
@@ -113,7 +103,7 @@ func cmdTokenTransfer(c *cli.Context) error {
 	}
 	toAddr := common.HexToAddress(toAddrHex)
 
-	ethSrv := startRelay(c)
+	ethSrv := loadRelay(c)
 
 	tokenContractAddr := common.HexToAddress(config.C.Contracts.Token)
 	ethSrv.LoadTokenContract(tokenContractAddr)

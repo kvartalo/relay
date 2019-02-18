@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"math/big"
+	"strconv"
 
 	"github.com/ethereum/go-ethereum/crypto"
 )
@@ -32,4 +34,13 @@ func Uint64ToEthBytes(u uint64) []byte {
 	var r [32]byte
 	copy(r[32-len(buff.Bytes()):], buff.Bytes())
 	return r[:]
+}
+
+func StringToBigInt(s string) (*big.Int, error) {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return nil, err
+	}
+	bigi := big.NewInt(int64(i))
+	return bigi, nil
 }

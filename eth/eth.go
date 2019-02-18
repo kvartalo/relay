@@ -44,6 +44,7 @@ func NewEthService(ks *keystore.KeyStore, acc *accounts.Account) *EthService {
 func (ethSrv *EthService) Account() *accounts.Account {
 	return ethSrv.acc
 }
+
 func (ethSrv *EthService) Client() *ethclient.Client {
 	return ethSrv.client
 }
@@ -71,16 +72,6 @@ func (ethSrv *EthService) GetBalance(address common.Address) (*big.Float, error)
 
 // DeployTokenContract deploys the Token contract to eth network
 func (ethSrv *EthService) DeployTokenContract() error {
-	// fromAddress := ethSrv.acc.Address
-	// nonce, err := ethSrv.client.PendingNonceAt(context.Background(), fromAddress)
-	// if err != nil {
-	//         return err
-	// }
-	//
-	// gasPrice, err := ethSrv.client.SuggestGasPrice(context.Background())
-	// if err != nil {
-	//         return err
-	// }
 	auth, err := GetAuth()
 	if err != nil {
 		return err

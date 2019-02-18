@@ -15,11 +15,11 @@ func newApiService() *gin.Engine {
 	api.Use(cors.Default())
 	api.GET("/info", handleInfo)
 	api.GET("/balance/:addr", handleGetBalance)
-	api.GET("/history/:addr", handleGetHistory)
+	api.GET("/history/:addr", handleGetHistory) // TODO
 	api.GET("/tx/nonce/:addr", handleGetTxNonce)
 	api.POST("/tx", handlePostTx)
-	api.GET("/polls", handleGetPolls)
-	api.GET("/polls/:id", handleGetPoll)
+	api.GET("/polls", handleGetPolls)    // TODO
+	api.GET("/polls/:id", handleGetPoll) // TODO
 	return api
 }
 

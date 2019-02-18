@@ -115,12 +115,14 @@ func handlePostTx(c *gin.Context) {
 }
 
 func handleGetPolls(c *gin.Context) {
+	// TODO
 	c.JSON(200, gin.H{
 		"polls": "polls",
 	})
 }
 
 func handleGetPoll(c *gin.Context) {
+	// TODO
 	pollId := c.Param("id")
 	c.JSON(200, gin.H{
 		"pollId": pollId,
