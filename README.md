@@ -26,8 +26,13 @@ server:
         Port: "portnumber"
 web3:
         url: "web3gateway-url"
+        startscanblock: fist-block-to-scan-transfer-txs
+        
 contracts:
         token: "0xdeployedAddr"
+storage:
+        path: ./databasepath
+
 ```
 
 Run Relay
@@ -37,6 +42,9 @@ Run Relay
 
 ### Commands
 ```sh
+# initializes the database
+./relay init
+
 # info about the relay address, eth and tokens
 ./relay info
 
