@@ -10,15 +10,29 @@ import (
 	"github.com/fatih/color"
 	"github.com/kvartalo/relay/config"
 	"github.com/kvartalo/relay/eth"
+	"github.com/kvartalo/relay/storage"
 	"github.com/urfave/cli"
 )
+
+func loadStorage(c *cli.Context) *storage.Storage {
+	if err := config.MustRead(c); err != nil {
+		color.Red(err.Error())
+		os.Exit(0)
+	}
+	sto, err := storage.New(config.C.Storage.Path)
+	if err != nil {
+		color.Red(err.Error())
+		os.Exit(0)
+	}
+	return sto
+}
 
 // loadRelay does:
 // - reads the configuration from config.yaml
 // - opens the KeyStorage specified in the configuration, creating a new keystorage and account
 // - creates a new EthService
 // - prints the balance of the Relay wallet
-func loadRelay(c *cli.Context) *eth.EthService {
+func loadRelay(c *cli.Context, storage *storage.Storage) *eth.EthService {
 	if err := config.MustRead(c); err != nil {
 		color.Red(err.Error())
 		os.Exit(0)
@@ -31,7 +45,7 @@ func loadRelay(c *cli.Context) *eth.EthService {
 	}
 	fmt.Println("Keystore with addr " + account.Address.Hex() + " opened")
 
-	ethSrv := eth.NewEthService(ks, account)
+	ethSrv := eth.NewEthService(ks, account, storage)
 
 	// get relay balance
 	balance, err := ethSrv.GetBalance(account.Address)

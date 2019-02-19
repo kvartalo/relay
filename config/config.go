@@ -15,10 +15,14 @@ type Config struct {
 		Port string
 	}
 	Web3 struct {
-		Url string
+		Url            string
+		StartScanBlock uint64
 	}
 	Contracts struct {
 		Token string
+	}
+	Storage struct {
+		Path string
 	}
 }
 

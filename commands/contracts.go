@@ -44,7 +44,7 @@ var ContractsCommands = []cli.Command{
 }
 
 func cmdTokenDeploy(c *cli.Context) error {
-	ethSrv := loadRelay(c)
+	ethSrv := loadRelay(c, nil)
 	err := ethSrv.DeployTokenContract()
 	return err
 }
@@ -61,7 +61,7 @@ func cmdTokenMint(c *cli.Context) error {
 		os.Exit(0)
 	}
 
-	ethSrv := loadRelay(c)
+	ethSrv := loadRelay(c, nil)
 
 	addr := common.HexToAddress(config.C.Keystorage.Address)
 
@@ -103,7 +103,7 @@ func cmdTokenTransfer(c *cli.Context) error {
 	}
 	toAddr := common.HexToAddress(toAddrHex)
 
-	ethSrv := loadRelay(c)
+	ethSrv := loadRelay(c, nil)
 
 	tokenContractAddr := common.HexToAddress(config.C.Contracts.Token)
 	ethSrv.LoadTokenContract(tokenContractAddr)

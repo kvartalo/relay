@@ -1,6 +1,7 @@
 package eth
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io/ioutil"
@@ -10,35 +11,55 @@ import (
 	"strings"
 
 	"github.com/ethereum/go-ethereum/accounts"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/fatih/color"
 	"github.com/kvartalo/relay/config"
 	"github.com/kvartalo/relay/eth/token"
+	"github.com/kvartalo/relay/storage"
 	"github.com/kvartalo/relay/utils"
+	log "github.com/sirupsen/logrus"
 )
 
 type EthService struct {
-	ks     *keystore.KeyStore
-	acc    *accounts.Account
-	client *ethclient.Client
-	Token  *token.Token
+	storage      *storage.Storage
+	ks           *keystore.KeyStore
+	acc          *accounts.Account
+	client       *ethclient.Client
+	Token        *token.Token
+	Scanner      *ScanEventDispatcher
+	tokenAddress common.Address
+	tokenAbi     *abi.ABI
 }
 
-func NewEthService(ks *keystore.KeyStore, acc *accounts.Account) *EthService {
+func NewEthService(ks *keystore.KeyStore, acc *accounts.Account, storage *storage.Storage) *EthService {
 	client, err := ethclient.Dial(config.C.Web3.Url)
 	if err != nil {
 		color.Red("Can not open connection to web3 (config.Web3.Url: " + config.C.Web3.Url + ")\n" + err.Error() + "\n")
 		os.Exit(0)
 	}
 	color.Green("Connection to web3 server opened")
-	return &EthService{
-		ks:     ks,
-		acc:    acc,
-		client: client,
+
+	tokenAbi, err := abi.JSON(strings.NewReader(token.TokenABI))
+	if err != nil {
+		log.Panic(err)
 	}
+
+	service := &EthService{
+		storage:  storage,
+		ks:       ks,
+		acc:      acc,
+		client:   client,
+		tokenAbi: &tokenAbi,
+	}
+
+	service.Scanner = NewScanEventDispatcher(client, service.scannedTx, service)
+
+	return service
 }
 
 func (ethSrv *EthService) Account() *accounts.Account {
@@ -78,11 +99,11 @@ func (ethSrv *EthService) DeployTokenContract() error {
 	}
 
 	taxDestination := ethSrv.acc.Address
-	address, tx, instance, err := token.DeployToken(auth, ethSrv.client, taxDestination)
+	address, tx, _, err := token.DeployToken(auth, ethSrv.client, taxDestination)
 	if err != nil {
 		return err
 	}
-	_ = instance
+	ethSrv.tokenAddress = address
 
 	color.Green("token contract deployed at address: " + address.Hex())
 	fmt.Println("deployment transaction: " + tx.Hash().Hex())
@@ -95,6 +116,7 @@ func (ethSrv *EthService) LoadTokenContract(contractAddr common.Address) {
 	if err != nil {
 		color.Red(err.Error())
 	}
+	ethSrv.tokenAddress = contractAddr
 	ethSrv.Token = instance
 }
 
@@ -126,4 +148,69 @@ func GetAuth() (*bind.TransactOpts, error) {
 	}
 	auth, err := bind.NewTransactor(strings.NewReader(string(b)), config.C.Keystorage.Password)
 	return auth, err
+}
+
+// scandipatcher events ----------------------------------------------
+
+func (ethSrv *EthService) scannedTx(block *types.Block, tx *types.Transaction, rcpt *types.Receipt) error {
+
+	transferEvent, ok := ethSrv.tokenAbi.Events["Transfer"]
+	if !ok {
+		panic(fmt.Errorf("Event Transfer not found"))
+	}
+	transferEventTopic := transferEvent.Id()
+
+	to := tx.To()
+	if to == nil || !bytes.Equal((*to)[:], ethSrv.tokenAddress[:]) {
+		return nil
+	}
+	for _, logevent := range rcpt.Logs {
+		if logevent.Removed {
+			continue
+		}
+		if !bytes.Equal(logevent.Topics[0][:], transferEventTopic[:]) {
+			continue
+		}
+		type TransferEvent struct {
+			From  common.Address
+			To    common.Address
+			Value *big.Int
+			IsTax bool
+		}
+
+		var event TransferEvent
+		err := ethSrv.tokenAbi.Unpack(&event, "Transfer", logevent.Data)
+		if err != nil {
+			return err
+		}
+
+		err = ethSrv.storage.AddTransfer(&storage.Transfer{
+			From:      event.From,
+			To:        event.To,
+			Value:     event.Value,
+			Timestamp: block.Time().Uint64(),
+		})
+		if err != nil {
+			return err
+		}
+
+	}
+	return nil
+}
+
+func (ethSrv *EthService) SavePointLoad() (lastBlock uint64, lastTxIndex uint, err error) {
+
+	sp, err := ethSrv.storage.LoadSavePoint()
+	if err != nil {
+		return 0, 0, nil
+	}
+	return sp.LastBlock, sp.LastTxIndex, nil
+}
+
+func (ethSrv *EthService) SavePointSave(lastBlock uint64, lastTxIndex uint) error {
+
+	return ethSrv.storage.SetSavePoint(storage.SavePoint{
+		LastBlock:   lastBlock,
+		LastTxIndex: lastTxIndex,
+	})
 }

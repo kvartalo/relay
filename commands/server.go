@@ -3,10 +3,17 @@ package commands
 import (
 	"github.com/kvartalo/relay/config"
 	"github.com/kvartalo/relay/endpoint"
+	"github.com/kvartalo/relay/storage"
 	"github.com/urfave/cli"
 )
 
 var ServerCommands = []cli.Command{
+	{
+		Name:    "init",
+		Aliases: []string{},
+		Usage:   "initialize the database",
+		Action:  cmdInit,
+	},
 	{
 		Name:    "start",
 		Aliases: []string{},
@@ -22,17 +29,30 @@ var ServerCommands = []cli.Command{
 }
 
 func cmdStart(c *cli.Context) error {
-	ethSrv := loadRelay(c)
-
+	sto := loadStorage(c)
+	sto.RawDump()
+	ethSrv := loadRelay(c, sto)
+	ethSrv.Scanner.Start()
 	// run the service
-	apiService := endpoint.Serve(config.C, ethSrv)
+	apiService := endpoint.Serve(config.C, sto, ethSrv)
 	apiService.Run(":" + config.C.Server.Port)
 
 	return nil
 }
 
 func cmdInfo(c *cli.Context) error {
-	_ = loadRelay(c)
+	storage := loadStorage(c)
+	_ = loadRelay(c, storage)
+
+	return nil
+}
+
+func cmdInit(c *cli.Context) error {
+	sto := loadStorage(c)
+	sto.SetSavePoint(storage.SavePoint{
+		LastBlock:   config.C.Web3.StartScanBlock,
+		LastTxIndex: 0,
+	})
 
 	return nil
 }

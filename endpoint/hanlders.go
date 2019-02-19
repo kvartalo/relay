@@ -8,6 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/gin-gonic/gin"
 	"github.com/kvartalo/relay/eth"
+	"github.com/kvartalo/relay/storage"
 )
 
 func handleInfo(c *gin.Context) {
@@ -30,12 +31,40 @@ func handleGetBalance(c *gin.Context) {
 	})
 }
 
+const pageSize = 20
+
 // no history for the moment
 func handleGetHistory(c *gin.Context) {
+
 	addrHex := c.Param("addr")
 	addr := common.HexToAddress(addrHex)
+	count, err := sto.GetTransferCount(&addr)
+	if err != nil {
+		fail(c, err)
+		return
+	}
+
+	var countstart int64
+	if count < pageSize {
+		countstart = 0
+	} else {
+		countstart = int64(count) - pageSize
+	}
+
+	transfers := []storage.Transfer{}
+	for i := int64(count) - 1; i >= countstart; i-- {
+		transfer, err := sto.GetTransfer(&addr, uint64(i))
+		if err != nil {
+			fail(c, err)
+			return
+		}
+		transfers = append(transfers, *transfer)
+	}
+
 	c.JSON(200, gin.H{
-		"addr": addr,
+		"addr":      addr,
+		"count":     count,
+		"transfers": transfers,
 	})
 }
 
