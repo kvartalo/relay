@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -46,6 +47,15 @@ func loadRelay(c *cli.Context, storage *storage.Storage) *eth.EthService {
 	fmt.Println("Keystore with addr " + account.Address.Hex() + " opened")
 
 	ethSrv := eth.NewEthService(ks, account, storage)
+
+	// get current block number
+	header, err := ethSrv.Client().HeaderByNumber(context.Background(), nil)
+	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(0)
+	}
+
+	fmt.Println("block number: " + header.Number.String())
 
 	// get relay balance
 	balance, err := ethSrv.GetBalance(account.Address)
