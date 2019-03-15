@@ -37,6 +37,16 @@ var ContractsCommands = []cli.Command{
 					Usage:  "tranfer tokens to a specified address",
 					Action: cmdTokenTransfer,
 				},
+				{
+					Name:   "info",
+					Usage:  "gets ifo about the token stats",
+					Action: cmdTokenInfo,
+				},
+				{
+					Name:   "renunceownership",
+					Usage:  "renunce ownership",
+					Action: cmdTokenRenunceOwnership,
+				},
 			},
 		}, // in the future here will come more contracts
 		},
@@ -82,6 +92,79 @@ func cmdTokenMint(c *cli.Context) error {
 	}
 	color.Magenta("current token balance: " + tokenBalance.String() + " Tokens\n")
 
+	return nil
+}
+
+func cmdTokenInfo(c *cli.Context) error {
+
+	ethSrv := loadRelay(c, nil)
+	tokenContractAddr := common.HexToAddress(config.C.Contracts.Token)
+	ethSrv.LoadTokenContract(tokenContractAddr)
+
+	owner, err := ethSrv.Token.Owner(nil)
+	if err != nil {
+		return err
+	}
+
+	totalSupply, err := ethSrv.Token.TotalSupply(nil)
+	if err != nil {
+		return err
+	}
+
+	taxPercent, err := ethSrv.Token.TaxPercent(nil)
+	if err != nil {
+		return err
+	}
+
+	taxDestination, err := ethSrv.Token.TaxDestination(nil)
+	if err != nil {
+		return err
+	}
+
+	color.Green("Token Owner     : %v", owner.Hex())
+	color.Green("TotalSupply     : %v", totalSupply.String())
+	color.Green("TaxPercent      : %v", taxPercent.String())
+	color.Green("TaxDestination  : %v", taxDestination.Hex())
+
+	return nil
+}
+
+func cmdTokenRenunceOwnership(c *cli.Context) error {
+
+	ethSrv := loadRelay(c, nil)
+	tokenContractAddr := common.HexToAddress(config.C.Contracts.Token)
+	ethSrv.LoadTokenContract(tokenContractAddr)
+
+	relayerAddr := common.HexToAddress(config.C.Keystorage.Address)
+
+	nonce, err := ethSrv.Client().PendingNonceAt(context.Background(), relayerAddr)
+	if err != nil {
+		return err
+	}
+
+	gasPrice, err := ethSrv.Client().SuggestGasPrice(context.Background())
+	if err != nil {
+		return err
+	}
+
+	auth, err := eth.GetAuth()
+	if err != nil {
+		return err
+	}
+
+	auth.Nonce = big.NewInt(int64(nonce))
+	auth.Value = big.NewInt(0)     // in wei
+	auth.GasLimit = uint64(300000) // in units
+	auth.GasPrice = gasPrice
+
+	// transfer token
+	color.Green("Renuncing ownership ")
+	tx, err := ethSrv.Token.RenounceOwnership(auth)
+	if err != nil {
+		return err
+	}
+
+	color.Green("Sent tx %v", tx.Hash().Hex())
 	return nil
 }
 

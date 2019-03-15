@@ -15,19 +15,775 @@ import (
 	"github.com/ethereum/go-ethereum/event"
 )
 
+// Reference imports to suppress errors if they are not otherwise used.
+var (
+	_ = big.NewInt
+	_ = strings.NewReader
+	_ = ethereum.NotFound
+	_ = abi.U256
+	_ = bind.Bind
+	_ = common.Big1
+	_ = types.BloomLookup
+	_ = event.NewSubscription
+)
+
+// OffchainsigABI is the input ABI used to generate the binding from.
+const OffchainsigABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"nonceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}]"
+
+// OffchainsigBin is the compiled bytecode used for deploying new contracts.
+const OffchainsigBin = `0x608060405234801561001057600080fd5b5060df8061001f6000396000f3fe6080604052348015600f57600080fd5b50600436106044577c01000000000000000000000000000000000000000000000000000000006000350463ed2a2d6481146049575b600080fd5b607960048036036020811015605d57600080fd5b503573ffffffffffffffffffffffffffffffffffffffff16608b565b60408051918252519081900360200190f35b73ffffffffffffffffffffffffffffffffffffffff166000908152602081905260409020549056fea165627a7a723058202ec18b67ca88d6d027c9ba30a29705c49529ceba0ec2149806b0c30bc133db880029`
+
+// DeployOffchainsig deploys a new Ethereum contract, binding an instance of Offchainsig to it.
+func DeployOffchainsig(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Offchainsig, error) {
+	parsed, err := abi.JSON(strings.NewReader(OffchainsigABI))
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(OffchainsigBin), backend)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	return address, tx, &Offchainsig{OffchainsigCaller: OffchainsigCaller{contract: contract}, OffchainsigTransactor: OffchainsigTransactor{contract: contract}, OffchainsigFilterer: OffchainsigFilterer{contract: contract}}, nil
+}
+
+// Offchainsig is an auto generated Go binding around an Ethereum contract.
+type Offchainsig struct {
+	OffchainsigCaller     // Read-only binding to the contract
+	OffchainsigTransactor // Write-only binding to the contract
+	OffchainsigFilterer   // Log filterer for contract events
+}
+
+// OffchainsigCaller is an auto generated read-only Go binding around an Ethereum contract.
+type OffchainsigCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// OffchainsigTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type OffchainsigTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// OffchainsigFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type OffchainsigFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// OffchainsigSession is an auto generated Go binding around an Ethereum contract,
+// with pre-set call and transact options.
+type OffchainsigSession struct {
+	Contract     *Offchainsig      // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts     // Call options to use throughout this session
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+}
+
+// OffchainsigCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type OffchainsigCallerSession struct {
+	Contract *OffchainsigCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts      // Call options to use throughout this session
+}
+
+// OffchainsigTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type OffchainsigTransactorSession struct {
+	Contract     *OffchainsigTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts      // Transaction auth options to use throughout this session
+}
+
+// OffchainsigRaw is an auto generated low-level Go binding around an Ethereum contract.
+type OffchainsigRaw struct {
+	Contract *Offchainsig // Generic contract binding to access the raw methods on
+}
+
+// OffchainsigCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type OffchainsigCallerRaw struct {
+	Contract *OffchainsigCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// OffchainsigTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type OffchainsigTransactorRaw struct {
+	Contract *OffchainsigTransactor // Generic write-only contract binding to access the raw methods on
+}
+
+// NewOffchainsig creates a new instance of Offchainsig, bound to a specific deployed contract.
+func NewOffchainsig(address common.Address, backend bind.ContractBackend) (*Offchainsig, error) {
+	contract, err := bindOffchainsig(address, backend, backend, backend)
+	if err != nil {
+		return nil, err
+	}
+	return &Offchainsig{OffchainsigCaller: OffchainsigCaller{contract: contract}, OffchainsigTransactor: OffchainsigTransactor{contract: contract}, OffchainsigFilterer: OffchainsigFilterer{contract: contract}}, nil
+}
+
+// NewOffchainsigCaller creates a new read-only instance of Offchainsig, bound to a specific deployed contract.
+func NewOffchainsigCaller(address common.Address, caller bind.ContractCaller) (*OffchainsigCaller, error) {
+	contract, err := bindOffchainsig(address, caller, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &OffchainsigCaller{contract: contract}, nil
+}
+
+// NewOffchainsigTransactor creates a new write-only instance of Offchainsig, bound to a specific deployed contract.
+func NewOffchainsigTransactor(address common.Address, transactor bind.ContractTransactor) (*OffchainsigTransactor, error) {
+	contract, err := bindOffchainsig(address, nil, transactor, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &OffchainsigTransactor{contract: contract}, nil
+}
+
+// NewOffchainsigFilterer creates a new log filterer instance of Offchainsig, bound to a specific deployed contract.
+func NewOffchainsigFilterer(address common.Address, filterer bind.ContractFilterer) (*OffchainsigFilterer, error) {
+	contract, err := bindOffchainsig(address, nil, nil, filterer)
+	if err != nil {
+		return nil, err
+	}
+	return &OffchainsigFilterer{contract: contract}, nil
+}
+
+// bindOffchainsig binds a generic wrapper to an already deployed contract.
+func bindOffchainsig(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(OffchainsigABI))
+	if err != nil {
+		return nil, err
+	}
+	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_Offchainsig *OffchainsigRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _Offchainsig.Contract.OffchainsigCaller.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_Offchainsig *OffchainsigRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Offchainsig.Contract.OffchainsigTransactor.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_Offchainsig *OffchainsigRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Offchainsig.Contract.OffchainsigTransactor.contract.Transact(opts, method, params...)
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_Offchainsig *OffchainsigCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _Offchainsig.Contract.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_Offchainsig *OffchainsigTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Offchainsig.Contract.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_Offchainsig *OffchainsigTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Offchainsig.Contract.contract.Transact(opts, method, params...)
+}
+
+// NonceOf is a free data retrieval call binding the contract method 0xed2a2d64.
+//
+// Solidity: function nonceOf(address _owner) constant returns(uint256)
+func (_Offchainsig *OffchainsigCaller) NonceOf(opts *bind.CallOpts, _owner common.Address) (*big.Int, error) {
+	var (
+		ret0 = new(*big.Int)
+	)
+	out := ret0
+	err := _Offchainsig.contract.Call(opts, out, "nonceOf", _owner)
+	return *ret0, err
+}
+
+// NonceOf is a free data retrieval call binding the contract method 0xed2a2d64.
+//
+// Solidity: function nonceOf(address _owner) constant returns(uint256)
+func (_Offchainsig *OffchainsigSession) NonceOf(_owner common.Address) (*big.Int, error) {
+	return _Offchainsig.Contract.NonceOf(&_Offchainsig.CallOpts, _owner)
+}
+
+// NonceOf is a free data retrieval call binding the contract method 0xed2a2d64.
+//
+// Solidity: function nonceOf(address _owner) constant returns(uint256)
+func (_Offchainsig *OffchainsigCallerSession) NonceOf(_owner common.Address) (*big.Int, error) {
+	return _Offchainsig.Contract.NonceOf(&_Offchainsig.CallOpts, _owner)
+}
+
+// OwnableABI is the input ABI used to generate the binding from.
+const OwnableABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"}]"
+
+// OwnableBin is the compiled bytecode used for deploying new contracts.
+const OwnableBin = `0x`
+
+// DeployOwnable deploys a new Ethereum contract, binding an instance of Ownable to it.
+func DeployOwnable(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Ownable, error) {
+	parsed, err := abi.JSON(strings.NewReader(OwnableABI))
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(OwnableBin), backend)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	return address, tx, &Ownable{OwnableCaller: OwnableCaller{contract: contract}, OwnableTransactor: OwnableTransactor{contract: contract}, OwnableFilterer: OwnableFilterer{contract: contract}}, nil
+}
+
+// Ownable is an auto generated Go binding around an Ethereum contract.
+type Ownable struct {
+	OwnableCaller     // Read-only binding to the contract
+	OwnableTransactor // Write-only binding to the contract
+	OwnableFilterer   // Log filterer for contract events
+}
+
+// OwnableCaller is an auto generated read-only Go binding around an Ethereum contract.
+type OwnableCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// OwnableTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type OwnableTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// OwnableFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type OwnableFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// OwnableSession is an auto generated Go binding around an Ethereum contract,
+// with pre-set call and transact options.
+type OwnableSession struct {
+	Contract     *Ownable          // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts     // Call options to use throughout this session
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+}
+
+// OwnableCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type OwnableCallerSession struct {
+	Contract *OwnableCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts  // Call options to use throughout this session
+}
+
+// OwnableTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type OwnableTransactorSession struct {
+	Contract     *OwnableTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts  // Transaction auth options to use throughout this session
+}
+
+// OwnableRaw is an auto generated low-level Go binding around an Ethereum contract.
+type OwnableRaw struct {
+	Contract *Ownable // Generic contract binding to access the raw methods on
+}
+
+// OwnableCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type OwnableCallerRaw struct {
+	Contract *OwnableCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// OwnableTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type OwnableTransactorRaw struct {
+	Contract *OwnableTransactor // Generic write-only contract binding to access the raw methods on
+}
+
+// NewOwnable creates a new instance of Ownable, bound to a specific deployed contract.
+func NewOwnable(address common.Address, backend bind.ContractBackend) (*Ownable, error) {
+	contract, err := bindOwnable(address, backend, backend, backend)
+	if err != nil {
+		return nil, err
+	}
+	return &Ownable{OwnableCaller: OwnableCaller{contract: contract}, OwnableTransactor: OwnableTransactor{contract: contract}, OwnableFilterer: OwnableFilterer{contract: contract}}, nil
+}
+
+// NewOwnableCaller creates a new read-only instance of Ownable, bound to a specific deployed contract.
+func NewOwnableCaller(address common.Address, caller bind.ContractCaller) (*OwnableCaller, error) {
+	contract, err := bindOwnable(address, caller, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &OwnableCaller{contract: contract}, nil
+}
+
+// NewOwnableTransactor creates a new write-only instance of Ownable, bound to a specific deployed contract.
+func NewOwnableTransactor(address common.Address, transactor bind.ContractTransactor) (*OwnableTransactor, error) {
+	contract, err := bindOwnable(address, nil, transactor, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &OwnableTransactor{contract: contract}, nil
+}
+
+// NewOwnableFilterer creates a new log filterer instance of Ownable, bound to a specific deployed contract.
+func NewOwnableFilterer(address common.Address, filterer bind.ContractFilterer) (*OwnableFilterer, error) {
+	contract, err := bindOwnable(address, nil, nil, filterer)
+	if err != nil {
+		return nil, err
+	}
+	return &OwnableFilterer{contract: contract}, nil
+}
+
+// bindOwnable binds a generic wrapper to an already deployed contract.
+func bindOwnable(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(OwnableABI))
+	if err != nil {
+		return nil, err
+	}
+	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_Ownable *OwnableRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _Ownable.Contract.OwnableCaller.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_Ownable *OwnableRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Ownable.Contract.OwnableTransactor.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_Ownable *OwnableRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Ownable.Contract.OwnableTransactor.contract.Transact(opts, method, params...)
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_Ownable *OwnableCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _Ownable.Contract.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_Ownable *OwnableTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Ownable.Contract.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_Ownable *OwnableTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Ownable.Contract.contract.Transact(opts, method, params...)
+}
+
+// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
+//
+// Solidity: function isOwner() constant returns(bool)
+func (_Ownable *OwnableCaller) IsOwner(opts *bind.CallOpts) (bool, error) {
+	var (
+		ret0 = new(bool)
+	)
+	out := ret0
+	err := _Ownable.contract.Call(opts, out, "isOwner")
+	return *ret0, err
+}
+
+// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
+//
+// Solidity: function isOwner() constant returns(bool)
+func (_Ownable *OwnableSession) IsOwner() (bool, error) {
+	return _Ownable.Contract.IsOwner(&_Ownable.CallOpts)
+}
+
+// IsOwner is a free data retrieval call binding the contract method 0x8f32d59b.
+//
+// Solidity: function isOwner() constant returns(bool)
+func (_Ownable *OwnableCallerSession) IsOwner() (bool, error) {
+	return _Ownable.Contract.IsOwner(&_Ownable.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Ownable *OwnableCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Ownable.contract.Call(opts, out, "owner")
+	return *ret0, err
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Ownable *OwnableSession) Owner() (common.Address, error) {
+	return _Ownable.Contract.Owner(&_Ownable.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Ownable *OwnableCallerSession) Owner() (common.Address, error) {
+	return _Ownable.Contract.Owner(&_Ownable.CallOpts)
+}
+
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
+//
+// Solidity: function renounceOwnership() returns()
+func (_Ownable *OwnableTransactor) RenounceOwnership(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Ownable.contract.Transact(opts, "renounceOwnership")
+}
+
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
+//
+// Solidity: function renounceOwnership() returns()
+func (_Ownable *OwnableSession) RenounceOwnership() (*types.Transaction, error) {
+	return _Ownable.Contract.RenounceOwnership(&_Ownable.TransactOpts)
+}
+
+// RenounceOwnership is a paid mutator transaction binding the contract method 0x715018a6.
+//
+// Solidity: function renounceOwnership() returns()
+func (_Ownable *OwnableTransactorSession) RenounceOwnership() (*types.Transaction, error) {
+	return _Ownable.Contract.RenounceOwnership(&_Ownable.TransactOpts)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(address newOwner) returns()
+func (_Ownable *OwnableTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
+	return _Ownable.contract.Transact(opts, "transferOwnership", newOwner)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(address newOwner) returns()
+func (_Ownable *OwnableSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _Ownable.Contract.TransferOwnership(&_Ownable.TransactOpts, newOwner)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(address newOwner) returns()
+func (_Ownable *OwnableTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _Ownable.Contract.TransferOwnership(&_Ownable.TransactOpts, newOwner)
+}
+
+// OwnableOwnershipTransferredIterator is returned from FilterOwnershipTransferred and is used to iterate over the raw logs and unpacked data for OwnershipTransferred events raised by the Ownable contract.
+type OwnableOwnershipTransferredIterator struct {
+	Event *OwnableOwnershipTransferred // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *OwnableOwnershipTransferredIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(OwnableOwnershipTransferred)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(OwnableOwnershipTransferred)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *OwnableOwnershipTransferredIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *OwnableOwnershipTransferredIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// OwnableOwnershipTransferred represents a OwnershipTransferred event raised by the Ownable contract.
+type OwnableOwnershipTransferred struct {
+	PreviousOwner common.Address
+	NewOwner      common.Address
+	Raw           types.Log // Blockchain specific contextual infos
+}
+
+// FilterOwnershipTransferred is a free log retrieval operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
+//
+// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+func (_Ownable *OwnableFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*OwnableOwnershipTransferredIterator, error) {
+
+	var previousOwnerRule []interface{}
+	for _, previousOwnerItem := range previousOwner {
+		previousOwnerRule = append(previousOwnerRule, previousOwnerItem)
+	}
+	var newOwnerRule []interface{}
+	for _, newOwnerItem := range newOwner {
+		newOwnerRule = append(newOwnerRule, newOwnerItem)
+	}
+
+	logs, sub, err := _Ownable.contract.FilterLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
+	if err != nil {
+		return nil, err
+	}
+	return &OwnableOwnershipTransferredIterator{contract: _Ownable.contract, event: "OwnershipTransferred", logs: logs, sub: sub}, nil
+}
+
+// WatchOwnershipTransferred is a free log subscription operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
+//
+// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
+func (_Ownable *OwnableFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *OwnableOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error) {
+
+	var previousOwnerRule []interface{}
+	for _, previousOwnerItem := range previousOwner {
+		previousOwnerRule = append(previousOwnerRule, previousOwnerItem)
+	}
+	var newOwnerRule []interface{}
+	for _, newOwnerItem := range newOwner {
+		newOwnerRule = append(newOwnerRule, newOwnerItem)
+	}
+
+	logs, sub, err := _Ownable.contract.WatchLogs(opts, "OwnershipTransferred", previousOwnerRule, newOwnerRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(OwnableOwnershipTransferred)
+				if err := _Ownable.contract.UnpackLog(event, "OwnershipTransferred", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// SafeMathABI is the input ABI used to generate the binding from.
+const SafeMathABI = "[]"
+
+// SafeMathBin is the compiled bytecode used for deploying new contracts.
+const SafeMathBin = `0x604c602c600b82828239805160001a60731460008114601c57601e565bfe5b5030600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea165627a7a723058200b941bfffd9358f34bd01240810b8ce720f774ded6328e073457cd6173c164930029`
+
+// DeploySafeMath deploys a new Ethereum contract, binding an instance of SafeMath to it.
+func DeploySafeMath(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *SafeMath, error) {
+	parsed, err := abi.JSON(strings.NewReader(SafeMathABI))
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(SafeMathBin), backend)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	return address, tx, &SafeMath{SafeMathCaller: SafeMathCaller{contract: contract}, SafeMathTransactor: SafeMathTransactor{contract: contract}, SafeMathFilterer: SafeMathFilterer{contract: contract}}, nil
+}
+
+// SafeMath is an auto generated Go binding around an Ethereum contract.
+type SafeMath struct {
+	SafeMathCaller     // Read-only binding to the contract
+	SafeMathTransactor // Write-only binding to the contract
+	SafeMathFilterer   // Log filterer for contract events
+}
+
+// SafeMathCaller is an auto generated read-only Go binding around an Ethereum contract.
+type SafeMathCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// SafeMathTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type SafeMathTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// SafeMathFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type SafeMathFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// SafeMathSession is an auto generated Go binding around an Ethereum contract,
+// with pre-set call and transact options.
+type SafeMathSession struct {
+	Contract     *SafeMath         // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts     // Call options to use throughout this session
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+}
+
+// SafeMathCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type SafeMathCallerSession struct {
+	Contract *SafeMathCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts   // Call options to use throughout this session
+}
+
+// SafeMathTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type SafeMathTransactorSession struct {
+	Contract     *SafeMathTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
+}
+
+// SafeMathRaw is an auto generated low-level Go binding around an Ethereum contract.
+type SafeMathRaw struct {
+	Contract *SafeMath // Generic contract binding to access the raw methods on
+}
+
+// SafeMathCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type SafeMathCallerRaw struct {
+	Contract *SafeMathCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// SafeMathTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type SafeMathTransactorRaw struct {
+	Contract *SafeMathTransactor // Generic write-only contract binding to access the raw methods on
+}
+
+// NewSafeMath creates a new instance of SafeMath, bound to a specific deployed contract.
+func NewSafeMath(address common.Address, backend bind.ContractBackend) (*SafeMath, error) {
+	contract, err := bindSafeMath(address, backend, backend, backend)
+	if err != nil {
+		return nil, err
+	}
+	return &SafeMath{SafeMathCaller: SafeMathCaller{contract: contract}, SafeMathTransactor: SafeMathTransactor{contract: contract}, SafeMathFilterer: SafeMathFilterer{contract: contract}}, nil
+}
+
+// NewSafeMathCaller creates a new read-only instance of SafeMath, bound to a specific deployed contract.
+func NewSafeMathCaller(address common.Address, caller bind.ContractCaller) (*SafeMathCaller, error) {
+	contract, err := bindSafeMath(address, caller, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &SafeMathCaller{contract: contract}, nil
+}
+
+// NewSafeMathTransactor creates a new write-only instance of SafeMath, bound to a specific deployed contract.
+func NewSafeMathTransactor(address common.Address, transactor bind.ContractTransactor) (*SafeMathTransactor, error) {
+	contract, err := bindSafeMath(address, nil, transactor, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &SafeMathTransactor{contract: contract}, nil
+}
+
+// NewSafeMathFilterer creates a new log filterer instance of SafeMath, bound to a specific deployed contract.
+func NewSafeMathFilterer(address common.Address, filterer bind.ContractFilterer) (*SafeMathFilterer, error) {
+	contract, err := bindSafeMath(address, nil, nil, filterer)
+	if err != nil {
+		return nil, err
+	}
+	return &SafeMathFilterer{contract: contract}, nil
+}
+
+// bindSafeMath binds a generic wrapper to an already deployed contract.
+func bindSafeMath(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(SafeMathABI))
+	if err != nil {
+		return nil, err
+	}
+	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_SafeMath *SafeMathRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _SafeMath.Contract.SafeMathCaller.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_SafeMath *SafeMathRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _SafeMath.Contract.SafeMathTransactor.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_SafeMath *SafeMathRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _SafeMath.Contract.SafeMathTransactor.contract.Transact(opts, method, params...)
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_SafeMath *SafeMathCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _SafeMath.Contract.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_SafeMath *SafeMathTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _SafeMath.Contract.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_SafeMath *SafeMathTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _SafeMath.Contract.contract.Transact(opts, method, params...)
+}
+
 // TokenABI is the input ABI used to generate the binding from.
-const TokenABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"_taxDestination\",\"type\":\"address\"}],\"name\":\"setTaxDestination\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"},{\"name\":\"_r\",\"type\":\"bytes32\"},{\"name\":\"_s\",\"type\":\"bytes32\"},{\"name\":\"_v\",\"type\":\"uint8\"}],\"name\":\"transfer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"taxDestination\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_addr\",\"type\":\"address\"},{\"name\":\"_limit\",\"type\":\"uint256\"}],\"name\":\"setLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"mint\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"defaultBalanceLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"limitOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"taxPercent\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_name\",\"type\":\"string\"},{\"name\":\"_r\",\"type\":\"bytes32\"},{\"name\":\"_s\",\"type\":\"bytes32\"},{\"name\":\"_v\",\"type\":\"uint8\"}],\"name\":\"setName\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"nonceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"nameOf\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"_taxDestination\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"isTax\",\"type\":\"bool\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Mint\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Burn\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"addr\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"LimitChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"addr\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"string\"}],\"name\":\"NameChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"TaxDestinationChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"}]"
+const TokenABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"},{\"name\":\"_r\",\"type\":\"bytes32\"},{\"name\":\"_s\",\"type\":\"bytes32\"},{\"name\":\"_v\",\"type\":\"uint8\"}],\"name\":\"transfer\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"taxDestination\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_addr\",\"type\":\"address\"},{\"name\":\"_limit\",\"type\":\"uint256\"}],\"name\":\"setLimit\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_account\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"mint\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"burn\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"defaultBalanceLimit\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"limitOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"taxPercent\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"isOwner\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_taxDestination\",\"type\":\"address\"},{\"name\":\"_taxPercent\",\"type\":\"uint256\"}],\"name\":\"setTaxDestination\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_name\",\"type\":\"string\"},{\"name\":\"_r\",\"type\":\"bytes32\"},{\"name\":\"_s\",\"type\":\"bytes32\"},{\"name\":\"_v\",\"type\":\"uint8\"}],\"name\":\"setName\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"nonceOf\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"nameOf\",\"outputs\":[{\"name\":\"\",\"type\":\"string\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"},{\"indexed\":false,\"name\":\"isTax\",\"type\":\"bool\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Mint\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Burn\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"addr\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"LimitChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"addr\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"string\"}],\"name\":\"NameChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"name\":\"addr\",\"type\":\"address\"}],\"name\":\"TaxDestinationChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"}]"
 
 // TokenBin is the compiled bytecode used for deploying new contracts.
-const TokenBin = `608060405260016002556801158e460913d0000060035534801561002257600080fd5b5060405160208062001f988339810180604052602081101561004357600080fd5b8101908080519060200190929190505050336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16600073ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a36101288161012e640100000000026401000000009004565b506103ea565b610145610393640100000000026401000000009004565b151561015057600080fd5b80600460006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60066000600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600101819055507fef9c668177207fb68ca5e3894a1efacebb659762b27a737fde58ceebc4f30ad3600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1660066000600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060010154604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018281526020019250505060405180910390a17f09eee28d8d70bfad809ce8acadd46ce657b1fa64646b1e4b414e6bbb2eb2c8fa600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390a150565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614905090565b611b9e80620003fa6000396000f3fe608060405234801561001057600080fd5b5060043610610133576000357c01000000000000000000000000000000000000000000000000000000009004806370a08231116100bf5780638f32d59b1161008e5780638f32d59b1461047d578063e69babe81461049f578063ed2a2d6414610559578063f2fde38b146105b1578063f5c57382146105f557610133565b806370a08231146103b3578063715018a61461040b5780637541f41c146104155780638da5cb5b1461043357610133565b806336db43b51161010657806336db43b51461027357806340c10f19146102c157806342966c681461030f57806347cf5f041461033d578063546a2ca41461035b57610133565b80631163c3eb1461013857806318160ddd1461017c5780631f6b6fa71461019a5780632c547b3d14610229575b600080fd5b61017a6004803603602081101561014e57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506106b2565b005b610184610908565b6040518082815260200191505060405180910390f35b610227600480360360c08110156101b057600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001909291908035906020019092919080359060200190929190803560ff16906020019092919050505061090e565b005b6102316109d3565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6102bf6004803603604081101561028957600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001909291905050506109f9565b005b61030d600480360360408110156102d757600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190505050610ac2565b005b61033b6004803603602081101561032557600080fd5b8101908080359060200190929190505050610caf565b005b610345610e5f565b6040518082815260200191505060405180910390f35b61039d6004803603602081101561037157600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610e65565b6040518082815260200191505060405180910390f35b6103f5600480360360208110156103c957600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610eb1565b6040518082815260200191505060405180910390f35b610413610efd565b005b61041d610fcf565b6040518082815260200191505060405180910390f35b61043b610fd5565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b610485610ffe565b604051808215151515815260200191505060405180910390f35b610557600480360360a08110156104b557600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001906401000000008111156104f257600080fd5b82018360208201111561050457600080fd5b8035906020019184600183028401116401000000008311171561052657600080fd5b90919293919293908035906020019092919080359060200190929190803560ff169060200190929190505050611055565b005b61059b6004803603602081101561056f57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050611127565b6040518082815260200191505060405180910390f35b6105f3600480360360208110156105c757600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050611170565b005b6106376004803603602081101561060b57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919050505061118f565b6040518080602001828103825283818151815260200191508051906020019080838360005b8381101561067757808201518184015260208101905061065c565b50505050905090810190601f1680156106a45780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6106ba610ffe565b15156106c557600080fd5b80600460006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff60066000600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600101819055507fef9c668177207fb68ca5e3894a1efacebb659762b27a737fde58ceebc4f30ad3600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1660066000600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060010154604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018281526020019250505060405180910390a17f09eee28d8d70bfad809ce8acadd46ce657b1fa64646b1e4b414e6bbb2eb2c8fa600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390a150565b60055481565b6109c086878787604051602001808473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c010000000000000000000000000281526014018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c010000000000000000000000000281526014018281526020019350505050604051602081830303815290604052858585611273565b6109cb8686866115b9565b505050505050565b600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b610a01610ffe565b1515610a0c57600080fd5b80600660008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600101819055507fef9c668177207fb68ca5e3894a1efacebb659762b27a737fde58ceebc4f30ad38282604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018281526020019250505060405180910390a15050565b610aca610ffe565b1515610ad557600080fd5b600073ffffffffffffffffffffffffffffffffffffffff168273ffffffffffffffffffffffffffffffffffffffff1614151515610b1157600080fd5b610b6681600660008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206000015461176d90919063ffffffff16565b600660008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060000181905550610bc18160055461176d90919063ffffffff16565b6005819055507ff431703d7399230d223d254d7e8479fcd3149952c18616d3c9eb716c6ef5d672600083836000604051808573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018381526020018215151515815260200194505050505060405180910390a17f07883703ed0e86588a40d76551c92f8a4b329e3bf19765e0e6749473c1a84665816040518082815260200191505060405180910390a15050565b610cb7610ffe565b1515610cc257600080fd5b610d1781600660003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206000015461178e90919063ffffffff16565b600660003373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060000181905550610d728160055461178e90919063ffffffff16565b6005819055507ff431703d7399230d223d254d7e8479fcd3149952c18616d3c9eb716c6ef5d672336000836000604051808573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018381526020018215151515815260200194505050505060405180910390a17fb90306ad06b2a6ff86ddc9327db583062895ef6540e62dc50add009db5b356eb816040518082815260200191505060405180910390a150565b60035481565b6000600660008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600101549050919050565b6000600660008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600001549050919050565b610f05610ffe565b1515610f1057600080fd5b600073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a360008060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550565b60025481565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905090565b60008060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614905090565b6110cd86878787604051602001808473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401838380828437808301925050509350505050604051602081830303815290604052858585611273565b8484600660008973ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600201919061111e929190611acd565b50505050505050565b6000600160008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020549050919050565b611178610ffe565b151561118357600080fd5b61118c816117b0565b50565b6060600660008373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206002018054600181600116156101000203166002900480601f0160208091040260200160405190810160405280929190818152602001828054600181600116156101000203166002900480156112675780601f1061123c57610100808354040283529160200191611267565b820191906000526020600020905b81548152906001019060200180831161124a57829003601f168201915b50505050509050919050565b600060197f01000000000000000000000000000000000000000000000000000000000000000260007f01000000000000000000000000000000000000000000000000000000000000000230600160008a73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020548860405160200180867effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19168152600101857effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff191681526001018473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c0100000000000000000000000002815260140183815260200182805190602001908083835b60208310151561141257805182526020820191506020810190506020830392506113ed565b6001836020036101000a03801982511681845116808217855250505050505090500195505050505050604051602081830303815290604052805190602001209050600060018284878760405160008152602001604052604051808581526020018460ff1660ff1681526020018381526020018281526020019450505050506020604051602081039080840390855afa1580156114b2573d6000803e3d6000fd5b5050506020604051035190508673ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16141515611561576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601d8152602001807f73656e6465722d616464726573732d646f65732d6e6f742d6d6174636800000081525060200191505060405180910390fd5b600160008873ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206000815480929190600101919050555050505050505050565b6115c683838360006118aa565b6000606460025483028115156115d857fe5b04905080600660008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060000154101561166b57600660008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206000015490505b60008111156116a4576116a384600460009054906101000a900473ffffffffffffffffffffffffffffffffffffffff168360016118aa565b5b6000600660008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060010154141561170d576003546116fb84610eb1565b1115151561170857600080fd5b611767565b600660008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206001015461175984610eb1565b1115151561176657600080fd5b5b50505050565b600080828401905083811015151561178457600080fd5b8091505092915050565b600082821115151561179f57600080fd5b600082840390508091505092915050565b600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16141515156117ec57600080fd5b8073ffffffffffffffffffffffffffffffffffffffff166000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e060405160405180910390a3806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff16021790555050565b600073ffffffffffffffffffffffffffffffffffffffff168373ffffffffffffffffffffffffffffffffffffffff16141515156118e657600080fd5b61193b82600660008773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206000015461178e90919063ffffffff16565b600660008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600001819055506119d682600660008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000206000015461176d90919063ffffffff16565b600660008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600001819055507ff431703d7399230d223d254d7e8479fcd3149952c18616d3c9eb716c6ef5d67284848484604051808573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018381526020018215151515815260200194505050505060405180910390a150505050565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f10611b0e57803560ff1916838001178555611b3c565b82800160010185558215611b3c579182015b82811115611b3b578235825591602001919060010190611b20565b5b509050611b499190611b4d565b5090565b611b6f91905b80821115611b6b576000816000905550600101611b53565b5090565b9056fea165627a7a72305820361b043fa2eb8b0bc92040f0b83698b1354068e7eeb4ae339338b62801e8ad460029`
+const TokenBin = `0x60806040819052600060028190556000196003558054600160a060020a0319163317808255600160a060020a0316917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908290a3610f8a806100626000396000f3fe608060405234801561001057600080fd5b5060043610610133576000357c010000000000000000000000000000000000000000000000000000000090048063715018a6116100bf578063d0c3fe0b1161008e578063d0c3fe0b146102c1578063e69babe8146102ed578063ed2a2d641461037c578063f2fde38b146103a2578063f5c57382146103c857610133565b8063715018a61461028d5780637541f41c146102955780638da5cb5b1461029d5780638f32d59b146102a557610133565b806340c10f191161010657806340c10f19146101f057806342966c681461021c57806347cf5f0414610239578063546a2ca41461024157806370a082311461026757610133565b806318160ddd146101385780631f6b6fa7146101525780632c547b3d146101a057806336db43b5146101c4575b600080fd5b610140610463565b60408051918252519081900360200190f35b61019e600480360360c081101561016857600080fd5b508035600160a060020a039081169160208101359091169060408101359060608101359060808101359060a0013560ff16610469565b005b6101a86104d0565b60408051600160a060020a039092168252519081900360200190f35b61019e600480360360408110156101da57600080fd5b50600160a060020a0381351690602001356104df565b61019e6004803603604081101561020657600080fd5b50600160a060020a03813516906020013561054e565b61019e6004803603602081101561023257600080fd5b5035610654565b61014061072a565b6101406004803603602081101561025757600080fd5b5035600160a060020a0316610730565b6101406004803603602081101561027d57600080fd5b5035600160a060020a031661074e565b61019e610769565b6101406107d3565b6101a86107d9565b6102ad6107e9565b604080519115158252519081900360200190f35b61019e600480360360408110156102d757600080fd5b50600160a060020a0381351690602001356107fa565b61019e600480360360a081101561030357600080fd5b600160a060020a03823516919081019060408101602082013564010000000081111561032e57600080fd5b82018360208201111561034057600080fd5b8035906020019184600183028401116401000000008311171561036257600080fd5b91935091508035906020810135906040013560ff166108e6565b6101406004803603602081101561039257600080fd5b5035600160a060020a0316610973565b61019e600480360360208110156103b857600080fd5b5035600160a060020a031661098e565b6103ee600480360360208110156103de57600080fd5b5035600160a060020a03166109ad565b6040805160208082528351818301528351919283929083019185019080838360005b83811015610428578181015183820152602001610410565b50505050905090810190601f1680156104555780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b60055481565b604080516c01000000000000000000000000600160a060020a03808a1682026020840152881602603482015260488082018790528251808303909101815260689091019091526104bd908790858585610a5e565b6104c8868686610c50565b505050505050565b600454600160a060020a031681565b6104e76107e9565b15156104f257600080fd5b600160a060020a0382166000818152600660209081526040918290206001018490558151928352820183905280517fef9c668177207fb68ca5e3894a1efacebb659762b27a737fde58ceebc4f30ad39281900390910190a15050565b6105566107e9565b151561056157600080fd5b600160a060020a038216151561057657600080fd5b600160a060020a03821660009081526006602052604090205461059f908263ffffffff610d3c16565b600160a060020a0383166000908152600660205260409020556005546105cb908263ffffffff610d3c16565b600555604080516000808252600160a060020a0385166020830152818301849052606082015290517ff431703d7399230d223d254d7e8479fcd3149952c18616d3c9eb716c6ef5d6729181900360800190a16040805182815290517f07883703ed0e86588a40d76551c92f8a4b329e3bf19765e0e6749473c1a846659181900360200190a15050565b61065c6107e9565b151561066757600080fd5b33600090815260066020526040902054610687908263ffffffff610d5516565b336000908152600660205260409020556005546106aa908263ffffffff610d5516565b60055560408051338152600060208201819052818301849052606082015290517ff431703d7399230d223d254d7e8479fcd3149952c18616d3c9eb716c6ef5d6729181900360800190a16040805182815290517fb90306ad06b2a6ff86ddc9327db583062895ef6540e62dc50add009db5b356eb9181900360200190a150565b60035481565b600160a060020a031660009081526006602052604090206001015490565b600160a060020a031660009081526006602052604090205490565b6107716107e9565b151561077c57600080fd5b60008054604051600160a060020a03909116907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0908390a36000805473ffffffffffffffffffffffffffffffffffffffff19169055565b60025481565b600054600160a060020a03165b90565b600054600160a060020a0316331490565b6108026107e9565b151561080d57600080fd5b6004805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a03848116919091178083556002849055811660009081526006602090815260408083206000196001918201559454909316808352918390209093015482519182529281019290925280517fef9c668177207fb68ca5e3894a1efacebb659762b27a737fde58ceebc4f30ad39281900390910190a160045460408051600160a060020a039092168252517f09eee28d8d70bfad809ce8acadd46ce657b1fa64646b1e4b414e6bbb2eb2c8fa9181900360200190a15050565b610944868787876040516020018084600160a060020a0316600160a060020a03166c01000000000000000000000000028152601401838380828437808301925050509350505050604051602081830303815290604052858585610a5e565b600160a060020a038616600090815260066020526040902061096a906002018686610ec6565b50505050505050565b600160a060020a031660009081526001602052604090205490565b6109966107e9565b15156109a157600080fd5b6109aa81610d6a565b50565b600160a060020a0381166000908152600660209081526040918290206002908101805484516001821615610100026000190190911692909204601f81018490048402830184019094528382526060939192909190830182828015610a525780601f10610a2757610100808354040283529160200191610a52565b820191906000526020600020905b815481529060010190602001808311610a3557829003601f168201915b50505050509050919050565b600160a060020a03851660009081526001602090815260408083205490517f190000000000000000000000000000000000000000000000000000000000000081840181815260218301869052306c0100000000000000000000000081026022850152603684018590528a5192958795919491938c9392605601918401908083835b60208310610afe5780518252601f199092019160209182019101610adf565b6001836020036101000a03801982511681845116808217855250505050505090500195505050505050604051602081830303815290604052805190602001209050600060018284878760405160008152602001604052604051808581526020018460ff1660ff1681526020018381526020018281526020019450505050506020604051602081039080840390855afa158015610b9e573d6000803e3d6000fd5b5050604051601f190151915050600160a060020a0380821690881614610c2557604080517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601d60248201527f73656e6465722d616464726573732d646f65732d6e6f742d6d61746368000000604482015290519081900360640190fd5b505050600160a060020a03909316600090815260016020819052604090912080549091019055505050565b610c5d8383836000610de7565b600254600160a060020a03841660009081526006602052604090205460649183029190910490811115610ca55750600160a060020a0383166000908152600660205260409020545b6000811115610cc857600454610cc8908590600160a060020a0316836001610de7565b600160a060020a0383166000908152600660205260409020600101541515610d0657600354610cf68461074e565b1115610d0157600080fd5b610d36565b600160a060020a038316600090815260066020526040902060010154610d2b8461074e565b1115610d3657600080fd5b50505050565b600082820183811015610d4e57600080fd5b9392505050565b600082821115610d6457600080fd5b50900390565b600160a060020a0381161515610d7f57600080fd5b60008054604051600160a060020a03808516939216917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e091a36000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0392909216919091179055565b600160a060020a0383161515610dfc57600080fd5b600160a060020a038416600090815260066020526040902054610e25908363ffffffff610d5516565b600160a060020a038086166000908152600660205260408082209390935590851681522054610e5a908363ffffffff610d3c16565b600160a060020a03808516600081815260066020908152604091829020949094558051928816835292820152808201849052821515606082015290517ff431703d7399230d223d254d7e8479fcd3149952c18616d3c9eb716c6ef5d6729181900360800190a150505050565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f10610f075782800160ff19823516178555610f34565b82800160010185558215610f34579182015b82811115610f34578235825591602001919060010190610f19565b50610f40929150610f44565b5090565b6107e691905b80821115610f405760008155600101610f4a56fea165627a7a7230582005988379de664f9345d467661de50d8c0b8c7f6d5934227251b5b6f1310992cd0029`
 
 // DeployToken deploys a new Ethereum contract, binding an instance of Token to it.
-func DeployToken(auth *bind.TransactOpts, backend bind.ContractBackend, _taxDestination common.Address) (common.Address, *types.Transaction, *Token, error) {
+func DeployToken(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Token, error) {
 	parsed, err := abi.JSON(strings.NewReader(TokenABI))
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
-	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(TokenBin), backend, _taxDestination)
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(TokenBin), backend)
 	if err != nil {
 		return common.Address{}, nil, nil, err
 	}
@@ -178,7 +934,7 @@ func (_Token *TokenTransactorRaw) Transact(opts *bind.TransactOpts, method strin
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(_owner address) constant returns(uint256)
+// Solidity: function balanceOf(address _owner) constant returns(uint256)
 func (_Token *TokenCaller) BalanceOf(opts *bind.CallOpts, _owner common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -190,14 +946,14 @@ func (_Token *TokenCaller) BalanceOf(opts *bind.CallOpts, _owner common.Address)
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(_owner address) constant returns(uint256)
+// Solidity: function balanceOf(address _owner) constant returns(uint256)
 func (_Token *TokenSession) BalanceOf(_owner common.Address) (*big.Int, error) {
 	return _Token.Contract.BalanceOf(&_Token.CallOpts, _owner)
 }
 
 // BalanceOf is a free data retrieval call binding the contract method 0x70a08231.
 //
-// Solidity: function balanceOf(_owner address) constant returns(uint256)
+// Solidity: function balanceOf(address _owner) constant returns(uint256)
 func (_Token *TokenCallerSession) BalanceOf(_owner common.Address) (*big.Int, error) {
 	return _Token.Contract.BalanceOf(&_Token.CallOpts, _owner)
 }
@@ -256,7 +1012,7 @@ func (_Token *TokenCallerSession) IsOwner() (bool, error) {
 
 // LimitOf is a free data retrieval call binding the contract method 0x546a2ca4.
 //
-// Solidity: function limitOf(_owner address) constant returns(uint256)
+// Solidity: function limitOf(address _owner) constant returns(uint256)
 func (_Token *TokenCaller) LimitOf(opts *bind.CallOpts, _owner common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -268,21 +1024,21 @@ func (_Token *TokenCaller) LimitOf(opts *bind.CallOpts, _owner common.Address) (
 
 // LimitOf is a free data retrieval call binding the contract method 0x546a2ca4.
 //
-// Solidity: function limitOf(_owner address) constant returns(uint256)
+// Solidity: function limitOf(address _owner) constant returns(uint256)
 func (_Token *TokenSession) LimitOf(_owner common.Address) (*big.Int, error) {
 	return _Token.Contract.LimitOf(&_Token.CallOpts, _owner)
 }
 
 // LimitOf is a free data retrieval call binding the contract method 0x546a2ca4.
 //
-// Solidity: function limitOf(_owner address) constant returns(uint256)
+// Solidity: function limitOf(address _owner) constant returns(uint256)
 func (_Token *TokenCallerSession) LimitOf(_owner common.Address) (*big.Int, error) {
 	return _Token.Contract.LimitOf(&_Token.CallOpts, _owner)
 }
 
 // NameOf is a free data retrieval call binding the contract method 0xf5c57382.
 //
-// Solidity: function nameOf(_owner address) constant returns(string)
+// Solidity: function nameOf(address _owner) constant returns(string)
 func (_Token *TokenCaller) NameOf(opts *bind.CallOpts, _owner common.Address) (string, error) {
 	var (
 		ret0 = new(string)
@@ -294,21 +1050,21 @@ func (_Token *TokenCaller) NameOf(opts *bind.CallOpts, _owner common.Address) (s
 
 // NameOf is a free data retrieval call binding the contract method 0xf5c57382.
 //
-// Solidity: function nameOf(_owner address) constant returns(string)
+// Solidity: function nameOf(address _owner) constant returns(string)
 func (_Token *TokenSession) NameOf(_owner common.Address) (string, error) {
 	return _Token.Contract.NameOf(&_Token.CallOpts, _owner)
 }
 
 // NameOf is a free data retrieval call binding the contract method 0xf5c57382.
 //
-// Solidity: function nameOf(_owner address) constant returns(string)
+// Solidity: function nameOf(address _owner) constant returns(string)
 func (_Token *TokenCallerSession) NameOf(_owner common.Address) (string, error) {
 	return _Token.Contract.NameOf(&_Token.CallOpts, _owner)
 }
 
 // NonceOf is a free data retrieval call binding the contract method 0xed2a2d64.
 //
-// Solidity: function nonceOf(_owner address) constant returns(uint256)
+// Solidity: function nonceOf(address _owner) constant returns(uint256)
 func (_Token *TokenCaller) NonceOf(opts *bind.CallOpts, _owner common.Address) (*big.Int, error) {
 	var (
 		ret0 = new(*big.Int)
@@ -320,14 +1076,14 @@ func (_Token *TokenCaller) NonceOf(opts *bind.CallOpts, _owner common.Address) (
 
 // NonceOf is a free data retrieval call binding the contract method 0xed2a2d64.
 //
-// Solidity: function nonceOf(_owner address) constant returns(uint256)
+// Solidity: function nonceOf(address _owner) constant returns(uint256)
 func (_Token *TokenSession) NonceOf(_owner common.Address) (*big.Int, error) {
 	return _Token.Contract.NonceOf(&_Token.CallOpts, _owner)
 }
 
 // NonceOf is a free data retrieval call binding the contract method 0xed2a2d64.
 //
-// Solidity: function nonceOf(_owner address) constant returns(uint256)
+// Solidity: function nonceOf(address _owner) constant returns(uint256)
 func (_Token *TokenCallerSession) NonceOf(_owner common.Address) (*big.Int, error) {
 	return _Token.Contract.NonceOf(&_Token.CallOpts, _owner)
 }
@@ -438,42 +1194,42 @@ func (_Token *TokenCallerSession) TotalSupply() (*big.Int, error) {
 
 // Burn is a paid mutator transaction binding the contract method 0x42966c68.
 //
-// Solidity: function burn(_value uint256) returns()
+// Solidity: function burn(uint256 _value) returns()
 func (_Token *TokenTransactor) Burn(opts *bind.TransactOpts, _value *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "burn", _value)
 }
 
 // Burn is a paid mutator transaction binding the contract method 0x42966c68.
 //
-// Solidity: function burn(_value uint256) returns()
+// Solidity: function burn(uint256 _value) returns()
 func (_Token *TokenSession) Burn(_value *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Burn(&_Token.TransactOpts, _value)
 }
 
 // Burn is a paid mutator transaction binding the contract method 0x42966c68.
 //
-// Solidity: function burn(_value uint256) returns()
+// Solidity: function burn(uint256 _value) returns()
 func (_Token *TokenTransactorSession) Burn(_value *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Burn(&_Token.TransactOpts, _value)
 }
 
 // Mint is a paid mutator transaction binding the contract method 0x40c10f19.
 //
-// Solidity: function mint(_account address, _value uint256) returns()
+// Solidity: function mint(address _account, uint256 _value) returns()
 func (_Token *TokenTransactor) Mint(opts *bind.TransactOpts, _account common.Address, _value *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "mint", _account, _value)
 }
 
 // Mint is a paid mutator transaction binding the contract method 0x40c10f19.
 //
-// Solidity: function mint(_account address, _value uint256) returns()
+// Solidity: function mint(address _account, uint256 _value) returns()
 func (_Token *TokenSession) Mint(_account common.Address, _value *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Mint(&_Token.TransactOpts, _account, _value)
 }
 
 // Mint is a paid mutator transaction binding the contract method 0x40c10f19.
 //
-// Solidity: function mint(_account address, _value uint256) returns()
+// Solidity: function mint(address _account, uint256 _value) returns()
 func (_Token *TokenTransactorSession) Mint(_account common.Address, _value *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.Mint(&_Token.TransactOpts, _account, _value)
 }
@@ -501,105 +1257,105 @@ func (_Token *TokenTransactorSession) RenounceOwnership() (*types.Transaction, e
 
 // SetLimit is a paid mutator transaction binding the contract method 0x36db43b5.
 //
-// Solidity: function setLimit(_addr address, _limit uint256) returns()
+// Solidity: function setLimit(address _addr, uint256 _limit) returns()
 func (_Token *TokenTransactor) SetLimit(opts *bind.TransactOpts, _addr common.Address, _limit *big.Int) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "setLimit", _addr, _limit)
 }
 
 // SetLimit is a paid mutator transaction binding the contract method 0x36db43b5.
 //
-// Solidity: function setLimit(_addr address, _limit uint256) returns()
+// Solidity: function setLimit(address _addr, uint256 _limit) returns()
 func (_Token *TokenSession) SetLimit(_addr common.Address, _limit *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.SetLimit(&_Token.TransactOpts, _addr, _limit)
 }
 
 // SetLimit is a paid mutator transaction binding the contract method 0x36db43b5.
 //
-// Solidity: function setLimit(_addr address, _limit uint256) returns()
+// Solidity: function setLimit(address _addr, uint256 _limit) returns()
 func (_Token *TokenTransactorSession) SetLimit(_addr common.Address, _limit *big.Int) (*types.Transaction, error) {
 	return _Token.Contract.SetLimit(&_Token.TransactOpts, _addr, _limit)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0xe69babe8.
 //
-// Solidity: function setName(_from address, _name string, _r bytes32, _s bytes32, _v uint8) returns()
+// Solidity: function setName(address _from, string _name, bytes32 _r, bytes32 _s, uint8 _v) returns()
 func (_Token *TokenTransactor) SetName(opts *bind.TransactOpts, _from common.Address, _name string, _r [32]byte, _s [32]byte, _v uint8) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "setName", _from, _name, _r, _s, _v)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0xe69babe8.
 //
-// Solidity: function setName(_from address, _name string, _r bytes32, _s bytes32, _v uint8) returns()
+// Solidity: function setName(address _from, string _name, bytes32 _r, bytes32 _s, uint8 _v) returns()
 func (_Token *TokenSession) SetName(_from common.Address, _name string, _r [32]byte, _s [32]byte, _v uint8) (*types.Transaction, error) {
 	return _Token.Contract.SetName(&_Token.TransactOpts, _from, _name, _r, _s, _v)
 }
 
 // SetName is a paid mutator transaction binding the contract method 0xe69babe8.
 //
-// Solidity: function setName(_from address, _name string, _r bytes32, _s bytes32, _v uint8) returns()
+// Solidity: function setName(address _from, string _name, bytes32 _r, bytes32 _s, uint8 _v) returns()
 func (_Token *TokenTransactorSession) SetName(_from common.Address, _name string, _r [32]byte, _s [32]byte, _v uint8) (*types.Transaction, error) {
 	return _Token.Contract.SetName(&_Token.TransactOpts, _from, _name, _r, _s, _v)
 }
 
-// SetTaxDestination is a paid mutator transaction binding the contract method 0x1163c3eb.
+// SetTaxDestination is a paid mutator transaction binding the contract method 0xd0c3fe0b.
 //
-// Solidity: function setTaxDestination(_taxDestination address) returns()
-func (_Token *TokenTransactor) SetTaxDestination(opts *bind.TransactOpts, _taxDestination common.Address) (*types.Transaction, error) {
-	return _Token.contract.Transact(opts, "setTaxDestination", _taxDestination)
+// Solidity: function setTaxDestination(address _taxDestination, uint256 _taxPercent) returns()
+func (_Token *TokenTransactor) SetTaxDestination(opts *bind.TransactOpts, _taxDestination common.Address, _taxPercent *big.Int) (*types.Transaction, error) {
+	return _Token.contract.Transact(opts, "setTaxDestination", _taxDestination, _taxPercent)
 }
 
-// SetTaxDestination is a paid mutator transaction binding the contract method 0x1163c3eb.
+// SetTaxDestination is a paid mutator transaction binding the contract method 0xd0c3fe0b.
 //
-// Solidity: function setTaxDestination(_taxDestination address) returns()
-func (_Token *TokenSession) SetTaxDestination(_taxDestination common.Address) (*types.Transaction, error) {
-	return _Token.Contract.SetTaxDestination(&_Token.TransactOpts, _taxDestination)
+// Solidity: function setTaxDestination(address _taxDestination, uint256 _taxPercent) returns()
+func (_Token *TokenSession) SetTaxDestination(_taxDestination common.Address, _taxPercent *big.Int) (*types.Transaction, error) {
+	return _Token.Contract.SetTaxDestination(&_Token.TransactOpts, _taxDestination, _taxPercent)
 }
 
-// SetTaxDestination is a paid mutator transaction binding the contract method 0x1163c3eb.
+// SetTaxDestination is a paid mutator transaction binding the contract method 0xd0c3fe0b.
 //
-// Solidity: function setTaxDestination(_taxDestination address) returns()
-func (_Token *TokenTransactorSession) SetTaxDestination(_taxDestination common.Address) (*types.Transaction, error) {
-	return _Token.Contract.SetTaxDestination(&_Token.TransactOpts, _taxDestination)
+// Solidity: function setTaxDestination(address _taxDestination, uint256 _taxPercent) returns()
+func (_Token *TokenTransactorSession) SetTaxDestination(_taxDestination common.Address, _taxPercent *big.Int) (*types.Transaction, error) {
+	return _Token.Contract.SetTaxDestination(&_Token.TransactOpts, _taxDestination, _taxPercent)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0x1f6b6fa7.
 //
-// Solidity: function transfer(_from address, _to address, _value uint256, _r bytes32, _s bytes32, _v uint8) returns()
+// Solidity: function transfer(address _from, address _to, uint256 _value, bytes32 _r, bytes32 _s, uint8 _v) returns()
 func (_Token *TokenTransactor) Transfer(opts *bind.TransactOpts, _from common.Address, _to common.Address, _value *big.Int, _r [32]byte, _s [32]byte, _v uint8) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "transfer", _from, _to, _value, _r, _s, _v)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0x1f6b6fa7.
 //
-// Solidity: function transfer(_from address, _to address, _value uint256, _r bytes32, _s bytes32, _v uint8) returns()
+// Solidity: function transfer(address _from, address _to, uint256 _value, bytes32 _r, bytes32 _s, uint8 _v) returns()
 func (_Token *TokenSession) Transfer(_from common.Address, _to common.Address, _value *big.Int, _r [32]byte, _s [32]byte, _v uint8) (*types.Transaction, error) {
 	return _Token.Contract.Transfer(&_Token.TransactOpts, _from, _to, _value, _r, _s, _v)
 }
 
 // Transfer is a paid mutator transaction binding the contract method 0x1f6b6fa7.
 //
-// Solidity: function transfer(_from address, _to address, _value uint256, _r bytes32, _s bytes32, _v uint8) returns()
+// Solidity: function transfer(address _from, address _to, uint256 _value, bytes32 _r, bytes32 _s, uint8 _v) returns()
 func (_Token *TokenTransactorSession) Transfer(_from common.Address, _to common.Address, _value *big.Int, _r [32]byte, _s [32]byte, _v uint8) (*types.Transaction, error) {
 	return _Token.Contract.Transfer(&_Token.TransactOpts, _from, _to, _value, _r, _s, _v)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(newOwner address) returns()
+// Solidity: function transferOwnership(address newOwner) returns()
 func (_Token *TokenTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
 	return _Token.contract.Transact(opts, "transferOwnership", newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(newOwner address) returns()
+// Solidity: function transferOwnership(address newOwner) returns()
 func (_Token *TokenSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
 	return _Token.Contract.TransferOwnership(&_Token.TransactOpts, newOwner)
 }
 
 // TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
 //
-// Solidity: function transferOwnership(newOwner address) returns()
+// Solidity: function transferOwnership(address newOwner) returns()
 func (_Token *TokenTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
 	return _Token.Contract.TransferOwnership(&_Token.TransactOpts, newOwner)
 }
@@ -679,7 +1435,7 @@ type TokenBurn struct {
 
 // FilterBurn is a free log retrieval operation binding the contract event 0xb90306ad06b2a6ff86ddc9327db583062895ef6540e62dc50add009db5b356eb.
 //
-// Solidity: event Burn(value uint256)
+// Solidity: event Burn(uint256 value)
 func (_Token *TokenFilterer) FilterBurn(opts *bind.FilterOpts) (*TokenBurnIterator, error) {
 
 	logs, sub, err := _Token.contract.FilterLogs(opts, "Burn")
@@ -691,7 +1447,7 @@ func (_Token *TokenFilterer) FilterBurn(opts *bind.FilterOpts) (*TokenBurnIterat
 
 // WatchBurn is a free log subscription operation binding the contract event 0xb90306ad06b2a6ff86ddc9327db583062895ef6540e62dc50add009db5b356eb.
 //
-// Solidity: event Burn(value uint256)
+// Solidity: event Burn(uint256 value)
 func (_Token *TokenFilterer) WatchBurn(opts *bind.WatchOpts, sink chan<- *TokenBurn) (event.Subscription, error) {
 
 	logs, sub, err := _Token.contract.WatchLogs(opts, "Burn")
@@ -802,7 +1558,7 @@ type TokenLimitChanged struct {
 
 // FilterLimitChanged is a free log retrieval operation binding the contract event 0xef9c668177207fb68ca5e3894a1efacebb659762b27a737fde58ceebc4f30ad3.
 //
-// Solidity: event LimitChanged(addr address, value uint256)
+// Solidity: event LimitChanged(address addr, uint256 value)
 func (_Token *TokenFilterer) FilterLimitChanged(opts *bind.FilterOpts) (*TokenLimitChangedIterator, error) {
 
 	logs, sub, err := _Token.contract.FilterLogs(opts, "LimitChanged")
@@ -814,7 +1570,7 @@ func (_Token *TokenFilterer) FilterLimitChanged(opts *bind.FilterOpts) (*TokenLi
 
 // WatchLimitChanged is a free log subscription operation binding the contract event 0xef9c668177207fb68ca5e3894a1efacebb659762b27a737fde58ceebc4f30ad3.
 //
-// Solidity: event LimitChanged(addr address, value uint256)
+// Solidity: event LimitChanged(address addr, uint256 value)
 func (_Token *TokenFilterer) WatchLimitChanged(opts *bind.WatchOpts, sink chan<- *TokenLimitChanged) (event.Subscription, error) {
 
 	logs, sub, err := _Token.contract.WatchLogs(opts, "LimitChanged")
@@ -924,7 +1680,7 @@ type TokenMint struct {
 
 // FilterMint is a free log retrieval operation binding the contract event 0x07883703ed0e86588a40d76551c92f8a4b329e3bf19765e0e6749473c1a84665.
 //
-// Solidity: event Mint(value uint256)
+// Solidity: event Mint(uint256 value)
 func (_Token *TokenFilterer) FilterMint(opts *bind.FilterOpts) (*TokenMintIterator, error) {
 
 	logs, sub, err := _Token.contract.FilterLogs(opts, "Mint")
@@ -936,7 +1692,7 @@ func (_Token *TokenFilterer) FilterMint(opts *bind.FilterOpts) (*TokenMintIterat
 
 // WatchMint is a free log subscription operation binding the contract event 0x07883703ed0e86588a40d76551c92f8a4b329e3bf19765e0e6749473c1a84665.
 //
-// Solidity: event Mint(value uint256)
+// Solidity: event Mint(uint256 value)
 func (_Token *TokenFilterer) WatchMint(opts *bind.WatchOpts, sink chan<- *TokenMint) (event.Subscription, error) {
 
 	logs, sub, err := _Token.contract.WatchLogs(opts, "Mint")
@@ -1047,7 +1803,7 @@ type TokenNameChanged struct {
 
 // FilterNameChanged is a free log retrieval operation binding the contract event 0x3b0a43ccc1ccd1c76ebb1a8d998fdfe1ded3766582dbbbcdda83889170bec53d.
 //
-// Solidity: event NameChanged(addr address, value string)
+// Solidity: event NameChanged(address addr, string value)
 func (_Token *TokenFilterer) FilterNameChanged(opts *bind.FilterOpts) (*TokenNameChangedIterator, error) {
 
 	logs, sub, err := _Token.contract.FilterLogs(opts, "NameChanged")
@@ -1059,7 +1815,7 @@ func (_Token *TokenFilterer) FilterNameChanged(opts *bind.FilterOpts) (*TokenNam
 
 // WatchNameChanged is a free log subscription operation binding the contract event 0x3b0a43ccc1ccd1c76ebb1a8d998fdfe1ded3766582dbbbcdda83889170bec53d.
 //
-// Solidity: event NameChanged(addr address, value string)
+// Solidity: event NameChanged(address addr, string value)
 func (_Token *TokenFilterer) WatchNameChanged(opts *bind.WatchOpts, sink chan<- *TokenNameChanged) (event.Subscription, error) {
 
 	logs, sub, err := _Token.contract.WatchLogs(opts, "NameChanged")
@@ -1170,7 +1926,7 @@ type TokenOwnershipTransferred struct {
 
 // FilterOwnershipTransferred is a free log retrieval operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
-// Solidity: event OwnershipTransferred(previousOwner indexed address, newOwner indexed address)
+// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 func (_Token *TokenFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, previousOwner []common.Address, newOwner []common.Address) (*TokenOwnershipTransferredIterator, error) {
 
 	var previousOwnerRule []interface{}
@@ -1191,7 +1947,7 @@ func (_Token *TokenFilterer) FilterOwnershipTransferred(opts *bind.FilterOpts, p
 
 // WatchOwnershipTransferred is a free log subscription operation binding the contract event 0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0.
 //
-// Solidity: event OwnershipTransferred(previousOwner indexed address, newOwner indexed address)
+// Solidity: event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)
 func (_Token *TokenFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts, sink chan<- *TokenOwnershipTransferred, previousOwner []common.Address, newOwner []common.Address) (event.Subscription, error) {
 
 	var previousOwnerRule []interface{}
@@ -1310,7 +2066,7 @@ type TokenTaxDestinationChanged struct {
 
 // FilterTaxDestinationChanged is a free log retrieval operation binding the contract event 0x09eee28d8d70bfad809ce8acadd46ce657b1fa64646b1e4b414e6bbb2eb2c8fa.
 //
-// Solidity: event TaxDestinationChanged(addr address)
+// Solidity: event TaxDestinationChanged(address addr)
 func (_Token *TokenFilterer) FilterTaxDestinationChanged(opts *bind.FilterOpts) (*TokenTaxDestinationChangedIterator, error) {
 
 	logs, sub, err := _Token.contract.FilterLogs(opts, "TaxDestinationChanged")
@@ -1322,7 +2078,7 @@ func (_Token *TokenFilterer) FilterTaxDestinationChanged(opts *bind.FilterOpts) 
 
 // WatchTaxDestinationChanged is a free log subscription operation binding the contract event 0x09eee28d8d70bfad809ce8acadd46ce657b1fa64646b1e4b414e6bbb2eb2c8fa.
 //
-// Solidity: event TaxDestinationChanged(addr address)
+// Solidity: event TaxDestinationChanged(address addr)
 func (_Token *TokenFilterer) WatchTaxDestinationChanged(opts *bind.WatchOpts, sink chan<- *TokenTaxDestinationChanged) (event.Subscription, error) {
 
 	logs, sub, err := _Token.contract.WatchLogs(opts, "TaxDestinationChanged")
@@ -1435,7 +2191,7 @@ type TokenTransfer struct {
 
 // FilterTransfer is a free log retrieval operation binding the contract event 0xf431703d7399230d223d254d7e8479fcd3149952c18616d3c9eb716c6ef5d672.
 //
-// Solidity: event Transfer(from address, to address, value uint256, isTax bool)
+// Solidity: event Transfer(address from, address to, uint256 value, bool isTax)
 func (_Token *TokenFilterer) FilterTransfer(opts *bind.FilterOpts) (*TokenTransferIterator, error) {
 
 	logs, sub, err := _Token.contract.FilterLogs(opts, "Transfer")
@@ -1447,7 +2203,7 @@ func (_Token *TokenFilterer) FilterTransfer(opts *bind.FilterOpts) (*TokenTransf
 
 // WatchTransfer is a free log subscription operation binding the contract event 0xf431703d7399230d223d254d7e8479fcd3149952c18616d3c9eb716c6ef5d672.
 //
-// Solidity: event Transfer(from address, to address, value uint256, isTax bool)
+// Solidity: event Transfer(address from, address to, uint256 value, bool isTax)
 func (_Token *TokenFilterer) WatchTransfer(opts *bind.WatchOpts, sink chan<- *TokenTransfer) (event.Subscription, error) {
 
 	logs, sub, err := _Token.contract.WatchLogs(opts, "Transfer")

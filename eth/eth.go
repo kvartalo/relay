@@ -1,3 +1,6 @@
+//go:generate solc --abi --bin token/contracts/token.sol -o build
+//go:generate abigen --bin=./build/Token.bin --abi=./build/Token.abi --pkg=token --out=token.go
+
 package eth
 
 import (
@@ -98,8 +101,7 @@ func (ethSrv *EthService) DeployTokenContract() error {
 		return err
 	}
 
-	taxDestination := ethSrv.acc.Address
-	address, tx, _, err := token.DeployToken(auth, ethSrv.client, taxDestination)
+	address, tx, _, err := token.DeployToken(auth, ethSrv.client)
 	if err != nil {
 		return err
 	}

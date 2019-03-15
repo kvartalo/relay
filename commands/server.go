@@ -39,7 +39,6 @@ func cmdStart(c *cli.Context) error {
 
 	return nil
 }
-
 func cmdInfo(c *cli.Context) error {
 	storage := loadStorage(c)
 	_ = loadRelay(c, storage)
