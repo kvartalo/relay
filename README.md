@@ -1,4 +1,4 @@
-# Relay
+# Relay [![Go Report Card](https://goreportcard.com/badge/github.com/kvartalo/relay)](https://goreportcard.com/report/github.com/kvartalo/relay) [![GoDoc](https://godoc.org/github.com/kvartalo/relay?status.svg)](https://godoc.org/github.com/kvartalo/relay)
 Kvartalo relay
 
 
@@ -27,7 +27,7 @@ server:
 web3:
         url: "web3gateway-url"
         startscanblock: fist-block-to-scan-transfer-txs
-        
+
 contracts:
         token: "0xdeployedAddr"
 storage:
@@ -67,3 +67,70 @@ Run Relay
 ./relay start
 ```
 
+
+### API Endpoints
+
+- **GET /balance/:addr**
+
+Returns:
+```json
+{
+  "addr": "0x104d6ea578124aa891163a0da51315cccc823939",
+  "balance": "23300"
+}
+```
+
+- **GET /history/:addr**
+
+Returns:
+```json
+{
+  "addr": "0x104d6ea578124aa891163a0da51315cccc823939",
+  "count": 2,
+  "transfers": [
+    {
+      "Timestamp": 1556194387,
+      "From": "0x104d6ea578124aa891163a0da51315cccc823939",
+      "To": "0x653ad143cd78e47db6846d1bd3cc0f69a6fb9225",
+      "Value": 3000
+    },
+    {
+      "Timestamp": 1556013327,
+      "From": "0x104d6ea578124aa891163a0da51315cccc823939",
+      "To": "0x3a05826f99a4ae1460e7c9b39d87dba74b09c3ad",
+      "Value": 3000
+    }
+  ]
+}
+```
+
+- **GET /tx/nonce/:addr**
+
+Returns:
+```json
+{
+  "addr": "0x104d6ea578124aa891163a0da51315cccc823939",
+  "nonce": 11
+}
+```
+
+- **POST /tx**
+
+Input:
+```json
+{
+  "from": "0x104d6ea578124aa891163a0da51315cccc823939",
+  "to": "0x653ad143cd78e47db6846d1bd3cc0f69a6fb9225",
+  "value": 3000,
+  "r": "sig.r parameter in hex",
+  "s": "sig.s parameter in hex",
+  "v": 0
+}
+```
+
+Returns:
+```json
+{
+  "ethTx": "0xtxhash"
+}
+```
