@@ -28,12 +28,8 @@ func loadStorage(c *cli.Context) *storage.Storage {
 	return sto
 }
 
-// loadRelay does:
-// - reads the configuration from config.yaml
-// - opens the KeyStorage specified in the configuration, creating a new keystorage and account
-// - creates a new EthService
-// - prints the balance of the Relay wallet
-func loadRelay(c *cli.Context, storage *storage.Storage) *eth.EthService {
+
+func loadKeyStore(c *cli.Context, storage *storage.Storage) *eth.EthService {
 	if err := config.MustRead(c); err != nil {
 		color.Red(err.Error())
 		os.Exit(0)
@@ -65,6 +61,18 @@ func loadRelay(c *cli.Context, storage *storage.Storage) *eth.EthService {
 	}
 	color.Cyan("current ether balance: " + balance.String() + " ETH\n")
 
+	return ethSrv
+}
+
+// loadRelay does:
+// - reads the configuration from config.yaml
+// - opens the KeyStorage specified in the configuration, creating a new keystorage and account
+// - creates a new EthService
+// - prints the balance of the Relay wallet
+func loadRelay(c *cli.Context, storage *storage.Storage) *eth.EthService {
+
+	ethSrv := loadKeyStore(c,storage)
+
 	addr := common.HexToAddress(config.C.Keystorage.Address)
 	tokenContractAddr := common.HexToAddress(config.C.Contracts.Token)
 	ethSrv.LoadTokenContract(tokenContractAddr)
@@ -77,6 +85,7 @@ func loadRelay(c *cli.Context, storage *storage.Storage) *eth.EthService {
 
 	return ethSrv
 }
+
 
 func importKeystorage(addr string, password string) (*keystore.KeyStore, *accounts.Account, error) {
 	file := KEYSPATH

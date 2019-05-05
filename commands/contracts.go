@@ -54,7 +54,7 @@ var ContractsCommands = []cli.Command{
 }
 
 func cmdTokenDeploy(c *cli.Context) error {
-	ethSrv := loadRelay(c, nil)
+	ethSrv := loadKeyStore(c,nil)
 	err := ethSrv.DeployTokenContract()
 	return err
 }
