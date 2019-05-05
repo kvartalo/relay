@@ -64,11 +64,6 @@ func loadKeyStore(c *cli.Context, storage *storage.Storage) *eth.EthService {
 	return ethSrv
 }
 
-// loadRelay does:
-// - reads the configuration from config.yaml
-// - opens the KeyStorage specified in the configuration, creating a new keystorage and account
-// - creates a new EthService
-// - prints the balance of the Relay wallet
 func loadRelay(c *cli.Context, storage *storage.Storage) *eth.EthService {
 
 	ethSrv := loadKeyStore(c,storage)
